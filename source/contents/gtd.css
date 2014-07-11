@@ -1,0 +1,65 @@
+/* common */
+#header {
+    height: 77px;
+    background-color: #E4E0D9;
+}
+
+#header img {
+    padding-left: 17px;
+    padding-top: 15px;
+}
+
+/* login */
+#login {
+	/*margin-left: auto;*/
+    /*margin-right: auto;*/
+    text-align: center;
+    margin-top: 150px;
+
+}
+
+#submit{
+	width: 231px;
+	height: 52px;
+	color:#68A4CC;
+}
+
+/* gtd */
+#sidebar {
+    margin:5px 80% 5px 5px;
+    padding:5px 20px 5px 5px;
+    height:530px;
+    background-color: rgba(104,164,204,0.6);
+ }
+
+ .menu{
+     font-family: Arial, Helvetica, Calibri, sans-serif;
+     font-size: 110%;
+     color: #E4E0D9;
+     line-height: 2.8em;
+ }
+
+ .underline{
+     border-bottom: 2px solid #E4E0D9;
+ }
+
+
+ ul li{
+     list-style-type: none;
+     position:relative;
+     left: -10px;
+     top:10px;
+ }
+.lists_container{
+    position: absolute;
+    right:5px;
+    top:90px;
+    width:79%;
+}
+.list_of_today_tasks{
+    padding:10px 0 10px 40px;
+    position:relative;
+    margin:5px 5px;
+    border: 1px solid #E4E0D9;
+    font-size:90%;
+}

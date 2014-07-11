@@ -1,0 +1,41 @@
+#header {
+    height: 77px;
+    background-color: #E4E0D9;
+}
+
+#header img {
+    padding-left: 17px;
+    padding-top: 15px;
+}
+
+#sidebar {
+    margin:5px 900px 0px 0px;
+    padding:10px;
+    height:530px;
+    background-color: rgba(104,164,204,0.6);
+ }
+
+ .menu{
+     font-family: Arial, Helvetica, Calibri;
+     font-size: 110%;
+     color: #E4E0D9;
+     line-height: 45px;
+ }
+
+ ul li{
+     list-style-type: none;
+ }
+.lists_container{
+    position: absolute;
+    right:0px;
+    top:90px;
+    width:900px;
+}
+.list_of_today_tasks{
+    padding:10px 0 10px 40px;
+    position:relative;
+    margin:5px 0;
+    border: 1px solid #E4E0D9;
+    font-size:90%;
+}
+

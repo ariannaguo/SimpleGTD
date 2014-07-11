@@ -1,0 +1,22 @@
+#header{
+	height:77px;
+	background-color:#E4E0D9;
+}
+
+#header img{
+	padding-left: 17px;
+	padding-top: 15px;
+}
+
+#login {
+	margin-left: auto;
+    margin-right: auto;
+
+}
+
+#submit{
+	width: 231px;
+	height: 52px;
+	color:#68A4CC;
+}
+
