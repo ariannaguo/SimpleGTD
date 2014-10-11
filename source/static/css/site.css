@@ -1,0 +1,250 @@
+html, body {
+    font-family: sans-serif, 微软雅黑;
+    font-size: 1.1em;
+}
+ul {
+    line-height: 1.5em;
+    list-style-type: square;
+    margin: 0.1em 0 0 1.6em;
+    padding: 0;
+}
+li {
+    margin-bottom: 0.1em;
+}
+a {
+    background: none repeat scroll 0 0 transparent;
+    color: #336699;
+    text-decoration: none;
+}
+h1 {
+    font-size: 168%;
+}
+h1, h2 {
+    margin-bottom: 0.6em;
+}
+h1, h2, h3, h4, h5, h6 {
+    background: none repeat scroll 0 0 transparent;
+    border-bottom: 1px solid #AAAAAA;
+    color: black;
+    font-weight: normal;
+    margin: 0;
+    overflow: hidden;
+    padding-bottom: 0.17em;
+    padding-top: 0.5em;
+}
+
+/* headers */
+div#header {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;
+}
+
+div#header h5 {
+    margin: 0;
+    padding: 0;
+}
+
+#p-personal {
+    right: 1em;
+}
+#p-personal {
+    position: absolute;
+    top: 0.33em;
+}
+
+#p-personal h5 {
+    display: none;
+}
+
+#p-personal ul {
+    list-style: none outside none;
+    margin: 0;
+    padding-left: 10em;
+    line-height: 1.5em;
+}
+
+#p-personal li {
+    font-size: 0.75em;
+    margin-left: 0.75em;
+    margin-top: 0.5em;
+    white-space: nowrap;
+}
+#p-personal li {
+    float: left;
+    line-height: 1.125em;
+}
+
+#right-navigation {
+    float: right;
+    margin-top: 2.5em;
+}
+
+#p-search {
+    margin-right: 1em;
+}
+#p-search {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+}
+#p-search {
+    float: left;
+}
+/* navigation */
+div#panel {
+    left: 0;
+    padding-top: 1em;
+    position: absolute;
+    top: 10px;
+    width: 10em;
+}
+#panel {
+    padding-left: 0.5em;
+}
+
+#p-logo a {
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: block;
+    height: 160px;
+    text-decoration: none;
+    width: 10em;
+}
+
+#panel.collapsible-nav .portal.persistent h5 {
+    background: none repeat scroll 0 0 transparent !important;
+    cursor: default;
+    padding-left: 0.7em;
+}
+#panel.collapsible-nav .portal.first h5 {
+    display: none;
+}
+
+div#panel div.portal {
+    margin-top: 15px;
+}
+
+div#panel div.portal div.body ul {
+    list-style: none outside none;
+    margin: 0.1em 0 0 3em;
+}
+div#panel div.portal div.body ul li {
+    line-height: 1.125em;
+}
+div#panel div.portal div.body ul li a {
+    font-size: 14px;
+    line-height: 1.125em;
+    color: #0645AD;
+}
+
+#panel.collapsible-nav .portal h5 {
+    color: #4D4D4D;
+    font-weight: normal;
+    margin-bottom: 0;
+    padding: 1px 0 1px 3em;
+}
+div#panel div.portal h5 {
+    border: medium none;
+    color: #444444;
+    cursor: default;
+    font-size: 16px;
+    font-weight: normal;
+    padding: 0 0.25em 0.25em 1.75em;
+}
+#panel.collapsible-nav .portal h5 a {
+    color: #4D4D4D;
+    text-decoration: none;
+}
+
+/* contents */
+div#content {
+    margin-top: 85px;
+    margin-left: 11em;
+    padding: 1.25em 1.5em 1.5em;
+    line-height: 1.5em;
+}
+div#content {
+    background-color: white;
+    background-image: url("/static/image/wiki_bgimg.png");
+    background-position: left top;
+    background-repeat: repeat-y;
+    color: black;
+    direction: ltr;
+    margin-left: 10em;
+    padding: 1em;
+}
+
+.firstHeading, #firstHeading {
+    line-height: 1.2em;
+    margin-bottom: 0.1em;
+    padding-bottom: 0;
+}
+
+#firstHeading {
+    font-size: 1.6em;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#bodyContent {
+    font-size: 0.8em;
+}
+div#bodyContent {
+    line-height: 1.5em;
+}
+#siteSub {
+    display: inline;
+    font-size: 92%;
+    font-weight: normal;
+}
+
+.content-ltr table, .content-ltr th, .content-ltr tr, .content-ltr td {
+    border-collapse: collapse;
+    text-align: left;
+    border: 1px solid #AAAAAA;
+    padding: 0.2em;
+}
+
+.content-ltr table {
+    padding-bottom: 0.8em;
+}
+
+.content-ltr th {
+    background-color: #F2F2F2;
+}
+
+/*.content-ltr tr.priority1 {*/
+    /*background-color: #996cff;*/
+/*}*/
+
+/*.content-ltr tr.priority2 {*/
+    /*background-color: #e269ff;*/
+/*}*/
+
+.content-ltr tr.priority3 {
+    background-color: #ffa8cb;
+}
+
+.content-ltr tr.priority2 {
+    background-color: #98ffa1;
+}
+
+.content-ltr input {
+    margin: 10px 0px 5px 5px;
+}
+
+.content-ltr li {
+    padding: 5px;
+}
+
+/* errors/exceptions */
+.errors {
+    color: red;
+}
+
+/* override jquery ui default settings */
+.ui-widget {
+    font-size: 0.9em;
+    font-family: sans-serif, 微软雅黑;
+}

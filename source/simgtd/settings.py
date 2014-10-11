@@ -80,9 +80,31 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
+STATIC_ROOT = ''
 STATIC_URL = '/static/'
+
+# List of finder classes that know how to find static files in
+# various locations.
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates/'),
+)
 
 try:
     from local_gtd_settings import *
 except ImportError as e:
     pass
+
+import socket
+print('host name: %s' % socket.gethostname())
