@@ -1,0 +1,5 @@
+Python2.7
+pip
+
+--
+django1.7
