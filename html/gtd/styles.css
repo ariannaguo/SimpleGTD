@@ -21,8 +21,6 @@ a {
 
 div #header {
     background-color: #F3F2ED;
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 div#header h1 {
@@ -68,15 +66,13 @@ div#footer {
     }
 
 div#container {
-    width: 900px;
+    width: 700px;
     margin: 0 auto;
 }
 
 div#content {
     float: right;
-    width: 695px;
-    min-height: 500px;
-    border-left: solid thin;
+    width: 500px;
 }
 
 div#navigation {

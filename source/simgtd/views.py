@@ -15,3 +15,13 @@ def say(request):
 
     return render_to_response('simgtd/says.html',
         RequestContext(request, {'says': says}))
+
+
+def about(request):
+    return render_to_response('simgtd/about.html',
+        RequestContext(request))
+
+
+def home(request):
+    return render_to_response('simgtd/home.html',
+        RequestContext(request))

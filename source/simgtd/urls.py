@@ -21,8 +21,18 @@ urlpatterns = patterns('',
     # for test app
     url(r'^polls/', include('polls.urls', namespace='polls')),
 
+    #url(r'^pastebin/', include('pastebin.urls', namespace='pastebin')),
+
     # for simple gtd
-    url(r'^$', views.say),
-    # url(r'^__main__/', views.main),
+    #url(r'^gtd/', include('gtd.urls', namespace='gtd')),
     url(r'^say/', views.say),
+    url(r'^about/', views.about),
+    url(r'^gtd/', views.say),
+
+    # for NLP
+    #url(r'^nlp/', include('nlp.urls', namespace='nlp')),
+
+    # for common
+    url(r'^$', views.home),
+    # url(r'^__main__/', views.main),
 )

@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <link type="text/css" href="{{ STATIC_URL }}css/gtd.css" rel="stylesheet">
+    <link type="text/css" href="{{ STATIC_URL }}css/site.css" rel="stylesheet">
     <meta charset="UTF-8">
-    <title>
-        list of today
-    </title>
+    <title>{% block title %}{% endblock %} - Simple GTD</title>
 </head>
 <body>
-    <div id="header">
-        <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD">
+<div id="container">
+  <div id="header">
+    <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD">
+  </div>
+  <div id="wrapper">
+    <div id="content">
+      {% block content %}{% endblock %}
     </div>
-    <div id="sidebar">
-        <ul>
-            <li class="menu">Basket</li>
-            <li class="menu underline">Projects</li>
-        </ul>
-        <ul>
-            <li class="menu">List of today</li>
-            <li class="menu underline">Calendar</li>
-        </ul>
-        <ul>
-            <li class="menu">Settings</li>
-        </ul>
-        <div class="lists_container">
-            <div class="list_of_today_tasks" id="task1">Learn HTML & CSS</div>
-            <div class="list_of_today_tasks" id="task2">Learn JavaScript</div>
-            <div class="list_of_today_tasks" id="task3">Learn jQuery</div>
-            <div class="list_of_today_tasks" id="task4">Learn AI</div>
-            <div class="list_of_today_tasks" id="task5">Learn Python</div>
-            <div class="list_of_today_tasks" id="task6">Learn Github...</div>
-            <div class="list_of_today_tasks" id="task7">Learn More...</div>
-        </div>
-    </div>
+  </div>
+  <div id="navigation">
+    <p><strong>GTD</strong></p>
+    <ul>
+      <li><a href="#">TODO</a></li>
+      <li><a href="#">Doing</a></li>
+      <li><a href="#">Done</a></li>
+    </ul>
+
+    <p><strong>NLP</strong></p>
+    <ul>
+      <li><a href="#">Words</a></li>
+      <li><a href="#">Tags</a></li>
+      <li><a href="#">POS</a></li>
+    </ul>
+  </div>
+  <div id="extra">
+    <p><strong>More details</strong></p>
+    <p>This is simple and practical GTD.</p>
+  </div>
+  <div id="footer">
+    <p>Simple GTD Inc.</p>
+  </div>
+</div>
 </body>
 </html>
