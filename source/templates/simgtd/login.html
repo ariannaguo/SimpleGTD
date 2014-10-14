@@ -1,28 +1,10 @@
-{% extends "base.html" %}
-
-{% block title %}Login Page{% endblock %}
-
-{% block page_header %}Loginging In{% endblock %}
-
-{% block main_content %}
-
-<h2>Enter your name & password</h2>
-{% if errors %}
-<ul class="errors">
-    {% for error in errors %}
-    <li>{{ error }}</li>
-    {% endfor%}
-</ul>
-{% endif %}
-
-<form action="" method="post">{% csrf_token %}
+<form action="" method="post">
     <label for="name">your name: </label>
-    <input type="text" value="{{ result.name }}" name="name" id="name">
+    <input type="text" value="" name="name" id="name">
     <br />
     <label for="password">password : </label>
-    <input type="password" value="{{ result.password }}" name="password" id="password">
+    <input type="password" value="" name="password" id="password">
     <br />
     <input type="submit" value="Login">
 
 </form>
-{% endblock %}

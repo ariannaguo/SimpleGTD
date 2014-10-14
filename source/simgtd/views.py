@@ -25,3 +25,8 @@ def about(request):
 def home(request):
     return render_to_response('simgtd/home.html',
         RequestContext(request))
+
+
+def login(request):
+    return render_to_response('simgtd/login.html',
+        RequestContext(request))
