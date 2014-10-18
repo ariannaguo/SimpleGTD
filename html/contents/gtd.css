@@ -2,8 +2,9 @@
 body{
     font-family:Calibri, Arial, Helvetica, sans-serif;
 }
+
 /*login signup header*/
-#header{
+#authHeader {
     position: absolute;
     left: 0px;
     top:0px;
@@ -11,13 +12,13 @@ body{
     height: 60px;
     background-color: white;
 }
-#header img{
+#authHeader img{
     padding-left: 17px;
     padding-top: 15px;
 }
 
 /*main pages header*/
-.container {
+#header {
     position: absolute;
     left: 0px;
     top:0px;
