@@ -136,13 +136,7 @@ div#navigation{
     font-size: 12px;
     font-weight: 600;
 }
-/*div#navigation ul li{*/
-    /*list-style-type: none;*/
-    /*position: relative;*/
-    /*top:70px;*/
-    /*left: -20px;*/
-    /*padding: 20px 5px 20px 5px;*/
-/*}*/
+
 div#icon_menu_block{
     position: relative;
     margin-top: 40px;
@@ -166,53 +160,75 @@ a:hover{
     text-decoration: underline;
 }
 
-/*div{*/
-    /*display: block;*/
-/*}*/
-div#content{
+
+div.content{
     position: absolute;
     right:5px;
-    top:60px;
+    top:50px;
+    right: 10px;
     width:80%;
     color: rgba(0,0,0,0.6);
     font-size: 12px;
 }
-/*#sidebar {*/
-    /*margin:5px 80% 5px 5px;*/
-    /*padding:5px 20px 5px 5px;*/
-    /*height:530px;*/
-    /*background-color: rgba(104,164,204,0.6);*/
- /*}*/
 
- /*.menu{*/
-     /*font-family: Arial, Helvetica, Calibri, sans-serif;*/
-     /*font-size: 110%;*/
-     /*color: #E4E0D9;*/
-     /*line-height: 2.8em;*/
- /*}*/
+/*goals basket*/
 
- /*.underline{*/
-     /*border-bottom: 2px solid #E4E0D9;*/
- /*}*/
+a.button{
+    position: absolute;
+    top:0px;
+    right: 0px;
+    text-align: right;
+    display: block;
+    border: solid 1px rgba(0,0,0,0.5);
+    padding:5px 5px;
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 16px;
+    font-weight: 600;
 
+}
 
- /*ul li{*/
-     /*list-style-type: none;*/
-     /*position:relative;*/
-     /*left: -10px;*/
-     /*top:10px;*/
- /*}*/
+#goals_list_container{
+    position: absolute;
+    display: block;
+    top:50px;
+    right: 0px;
+    width: 100%;
+    padding: 5px;
+    font-size: 14px;
+}
 
-/*.lists_container{*/
-    /*position: absolute;*/
-    /*right:5px;*/
-    /*top:90px;*/
-    /*width:79%;*/
-/*}*/
-/*.list_of_today_tasks{*/
-    /*padding:10px 0 10px 40px;*/
-    /*position:relative;*/
-    /*margin:5px 5px;*/
-    /*border: 1px solid #E4E0D9;*/
-    /*font-size:90%;*/
-/*}*/
+.table{
+    display: table;
+    border: solid 1px rgba(0, 0, 0, 0.5);
+}
+tbody{
+    display: table-row-group;
+    vertical-align: middle;
+    text-align: center;
+    border-collapse: collapse;
+    border:dotted 1px rgba(0,0,0,0.4);
+
+}
+td,th{
+    padding: 5px;
+}
+th{
+    font-weight: 600;
+}
+
+.goals{
+    width: 320px;
+}
+.duration{
+    width: 195px;
+}
+.progress{
+    width: 195px;
+}
+.deadline{
+    width: 195px;
+}
+.states{
+    width: 195px;
+}
