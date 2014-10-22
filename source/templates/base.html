@@ -9,12 +9,16 @@
     <div id="header">
         <div class="row">
         <div class="header-primary">
-            <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD">
+            <a href="/">
+                <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD" />
+            </a>
         </div>
         <div class="header-secondary">
             <input type="search" name="search" value placeholder="search" id="search">
             <span style="margin:0px -2px 0px 2px;color:#717171;"> |</span>
-            <a class="header_account">Arianna Guo</a>
+            <a class="header_account" title="{{ user.email }}">howdy, {{ user.first_name }}</a> |
+            <a class="header_account" href="/admin/">manage site</a> |
+            <a class="header_account" href="/logout/">logout</a>
         </div>
         </div>
     </div>

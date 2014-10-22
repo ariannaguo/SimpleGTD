@@ -160,7 +160,7 @@ div#icon_menu_block{
 }
 a:link{
     text-decoration: none;
-    color: white;
+    color: black;
 }
 a:hover{
     text-decoration: underline;

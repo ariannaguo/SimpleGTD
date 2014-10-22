@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^about/', views.about),
     url(r'^gtd/', views.say),
     url(r'^login/', views.login),
+    url(r'^logout/', views.logout),
 
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),

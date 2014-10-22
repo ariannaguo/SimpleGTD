@@ -1,10 +1,39 @@
-<form action="" method="post">
-    <label for="name">your name: </label>
-    <input type="text" value="" name="name" id="name">
-    <br />
-    <label for="password">password : </label>
-    <input type="password" value="" name="password" id="password">
-    <br />
-    <input type="submit" value="Login">
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/gtd.css"/>
+    <meta charset="UTF-8">
+    <title>
+        Log In
+    </title>
+</head>
+<body>
+    <div id="authHeader">
+        <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD">
+    </div>
+    <div id="login-block">
 
-</form>
+        {% if errors %}
+        <ul class="errors">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor%}
+        </ul>
+        {% endif %}
+
+        <form action="" method="post">{% csrf_token %}
+            <label for="login_email">Name:</label>
+            <input type="text" name="name" value placeholder="your name here"
+                value="{{ result.name }}" id="login_email">
+            <label for="login_password">Password:</label>
+            <input type="password" name="password" value placeholder="your password"
+                value="{{ result.password }}" id="login_password">
+            <input id="btn_login_submit" class="login_submit button blue_button"
+                type="submit" value="Log In">
+            <!-- <span id="btn_signup" class="signup button white_button">
+                SIGN UP
+            </span> -->
+        </form>
+    </div>
+</body>
+</html>
