@@ -21,13 +21,12 @@ urlpatterns = patterns('',
     # for test app
     url(r'^polls/', include('polls.urls', namespace='polls')),
 
-    #url(r'^pastebin/', include('pastebin.urls', namespace='pastebin')),
-
     # for simple gtd
     #url(r'^gtd/', include('gtd.urls', namespace='gtd')),
     url(r'^say/', views.say),
     url(r'^about/', views.about),
     url(r'^gtd/', views.say),
+    url(r'^add_goal/', views.add_goal),
     url(r'^login/', views.login),
     url(r'^logout/', views.logout),
 

@@ -33,6 +33,12 @@ def home(request):
         RequestContext(request))
 
 
+@login_required
+def add_goal(request):
+    return render_to_response('simgtd/add_goal.html',
+        RequestContext(request))
+
+
 def login(request):
     errors = []
     result = {}
