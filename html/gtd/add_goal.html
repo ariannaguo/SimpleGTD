@@ -6,6 +6,29 @@
     <title>
         Goals basket
     </title>
+    <link rel="stylesheet" href="../contents/jquery-ui.css">
+    <script src="../contents/jquery-1.11.1.js"></script>
+    <script src="../contents/jquery-ui.js"></script>
+    <script>
+        $(function() {
+            $( "#dialog" ).dialog({
+                autoOpen: false,
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
+
+            $( "#opener" ).click(function() {
+                $( "#dialog" ).dialog( "open" );
+            });
+        });
+    </script>
+
 </head>
 <body>
     <div id="header">
@@ -43,6 +66,10 @@
             <a href="goals_basket.html" class="cancel">Cancel</a>
         </div>
         </div>
+    <div id="dialog" title="Basic dialog">
+        <p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
+    </div>
 
+    <button id="opener">Open Dialog</button>
 </body>
 </html>

@@ -163,9 +163,8 @@ a:hover{
 
 div.content{
     position: absolute;
-    right:5px;
+    right:20px;
     top:50px;
-    right: 10px;
     width:80%;
     color: rgba(0,0,0,0.6);
     font-size: 12px;
