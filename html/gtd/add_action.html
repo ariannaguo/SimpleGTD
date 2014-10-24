@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <link type="text/css" rel="stylesheet" href="../contents/gtd.css"/>
+    <meta charset="UTF-8">
+    <title>
+        Add Action
+    </title>
+
+</head>
+<body>
+
+    <div id="add_action_setting">
+        <div class="field">
+            <label class="field_label"  for="action">Action</label>
+            <input type="text" name="action"  class="field_label_input">
+        </div>
+        <div class="field">
+            <label class="field_label" for="action_time_needed">Time needed</label>
+            <input type="number" name="hours" class="field_label_input time_input">
+            <label>h</label>
+            <input type="number" name="minutes" class="field_label_input time_input">
+            <label>m</label>
+        </div>
+        <div class="field">
+            <label class="field_label" for="action_deadline">Deadline</label>
+            <input type="date" name="deadline" class="field_label_input">
+        </div>
+        <div id="checks">
+        <div class="field check">
+            <label for="check_week" class="check">
+                <input type="checkbox" name="check_week" class="check_week">This week
+            </label>
+            <label for="check_week" class="check">
+                <input type="checkbox" name="check_week" class="check_week">Next week
+            </label>
+        </div>
+        <div class="field">
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Mon
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Tue
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Wed
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Thu
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Fri
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Sat
+            </label>
+            <label for="check_day" class="check">
+                <input type="checkbox" name="check_day" class="check_day">Sun
+            </label>
+        </div>
+
+        </div>
+
+        <div class="field_button">
+            <!--<a href="goals_basket.html" class="save">Save</a>-->
+            <input type="button" class="save" value="Save">
+            <a href="add_goal.html" class="cancel">Cancel</a>
+        </div>
+        </div>
+
+</body>
+</html>

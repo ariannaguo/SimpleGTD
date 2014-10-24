@@ -172,7 +172,7 @@ div.content{
 
 /*goals basket*/
 
-a.button{
+input.button{
     position: absolute;
     top:0px;
     right: 0px;
@@ -182,6 +182,7 @@ a.button{
     padding:5px 5px;
     text-decoration: none;
     color: rgba(0, 0, 0, 0.5);
+    background-color: #ffffff;
     font-size: 16px;
     font-weight: 600;
 
@@ -281,11 +282,11 @@ th{
 .field_button{
     color: rgba(0,0,0,0.5);
     font-weight: 600;
-    padding-top: 50px;
+    padding-top: 40px;
     font-size: 14px;
 
 }
-a.save{
+input.save{
     border-radius: 2px;
     padding: 10px 20px;
     background: #68a4cc;
@@ -294,4 +295,16 @@ a.save{
 a.cancel{
     margin-left: 30px;
     color: #68a4cc;
+}
+
+/*add_action*/
+#checks{
+    margin-top: 30px;
+}
+.time_input{
+    width:60px;
+    height:20px;
+}
+label.check{
+    font-weight: 600;
 }

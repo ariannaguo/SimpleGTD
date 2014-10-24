@@ -4,30 +4,8 @@
     <link type="text/css" rel="stylesheet" href="../contents/gtd.css"/>
     <meta charset="UTF-8">
     <title>
-        Goals basket
+        Add Goal
     </title>
-    <link rel="stylesheet" href="../contents/jquery-ui.css">
-    <script src="../contents/jquery-1.11.1.js"></script>
-    <script src="../contents/jquery-ui.js"></script>
-    <script>
-        $(function() {
-            $( "#dialog" ).dialog({
-                autoOpen: false,
-                show: {
-                    effect: "blind",
-                    duration: 1000
-                },
-                hide: {
-                    effect: "explode",
-                    duration: 1000
-                }
-            });
-
-            $( "#opener" ).click(function() {
-                $( "#dialog" ).dialog( "open" );
-            });
-        });
-    </script>
 
 </head>
 <body>
@@ -47,8 +25,8 @@
     <div id="add_goal_setting">
         <textarea type="text" id="quickTitle" value placeholder="Add a goal..." autofocus="auotofocus" style="height:30px"></textarea>
         <div class="field">
-            <label class="field_label"  for="goal_duration">Duration</label>
-            <input type="text" name="duration" value placeholder="20 Days" class="field_label_input">
+            <label class="field_label"  for="goal_duration">Duration (days)</label>
+            <input type="number" name="duration"  class="field_label_input">
         </div>
         <div class="field">
             <label class="field_label" for="goal_deadline">Deadline</label>
@@ -62,14 +40,11 @@
         <div class="actions"><a>action 2</a></div>
 
         <div class="field_button">
-            <a href="goals_basket.html" class="save">Save</a>
+            <!--<a href="goals_basket.html" class="save">Save</a>-->
+            <input type="button" class="save" value="Save">
             <a href="goals_basket.html" class="cancel">Cancel</a>
         </div>
         </div>
-    <div id="dialog" title="Basic dialog">
-        <p>This is an animated dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-    </div>
 
-    <button id="opener">Open Dialog</button>
 </body>
 </html>
