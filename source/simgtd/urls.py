@@ -24,10 +24,10 @@ urlpatterns = patterns('',
     # for simple gtd
     url(r'^about/', views.about),
     url(r'^gtd/', views.say),
-    url(r'^goals/', views.goals),
-    url(r'^add_goal/', views.add_goal),
+    url(r'^goal/list/', views.goals),
     url(r'^goal/add/', views.add_goal),
-
+    url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),
+    url(r'^action/list/', views.action_list),
 
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),

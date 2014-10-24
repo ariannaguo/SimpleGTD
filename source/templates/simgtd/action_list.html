@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Actions{% endblock %}
+
+{% block content %}
+
+    <div id="goals_basket">
+        <a href="/add_goal" class="button add">+ ADD GOAL</a>
+
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Daily list</a></li>
+                <li><a href="#tabs-2">Weekly list</a></li>
+            </ul>
+            <div id="tabs-1">
+                action list
+            </div>
+            <div id="tabs-2">
+                weekly list
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

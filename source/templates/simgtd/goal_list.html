@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Goals{% endblock %}
+
+{% block content %}
+
+    <div id="goals_basket">
+        <a href="/goal/add/" class="button add">+ ADD GOAL</a>
+
+            {% if goals %}
+                <p>You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
+
+                <table>
+                    <tbody>
+                        <tr>
+                           <th class="goals" >Goals</th>
+                           <th class="duration">Duration</th>
+                           <th class="progress">Progress</th>
+                           <th class="deadline">Due Date</th>
+                           <th class="states">State</th>
+                        </tr>
+                        {% for goal in goals %}
+                        <tr>
+                            <td class="goals"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
+                            <td class="duration">{{ goal.duration }} days</td>
+                            <td class="progress">{{ goal.progress }}</td>
+                            <td class="deadline">{{ goal.due_date|date:"N j (D)" }}</td>
+                            <td class="states">{{ goal.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                No goals found, why?
+            {% endif %}
+
+    </div>
+
+{% endblock %}

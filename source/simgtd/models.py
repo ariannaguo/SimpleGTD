@@ -46,7 +46,18 @@ class Goal(models.Model):
     priority = models.ForeignKey(Priority, default=Constants.priority_normal)
 
     def __unicode__(self):
-        return '%s (category: %s)' % (self.subject, self.category.__unicode__())
+        return self.subject
+
+
+class Action(models.Model):
+    subject = models.CharField(max_length=200)
+    memo = models.TextField(max_length=1000, blank=True)
+    hours = models.PositiveSmallIntegerField(default=0)
+    minutes = models.PositiveSmallIntegerField(default=0)
+    start_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
+
+    goal = models.ForeignKey(Goal, null=True, blank=True)
 
 
 class login_result():

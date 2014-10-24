@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -7,14 +7,14 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
-from simgtd.models import login_result
+from simgtd.models import login_result, Goal, Constants
 
 
 @login_required
 def say(request):
     says = []
     says.append('Do what you like and like what you are doing.')
-    says.append(datetime.datetime.now())
+    says.append(datetime.now())
     says.append('Greeting')
 
     return render_to_response('simgtd/says.html', RequestContext(request, {'says': says}))
@@ -32,12 +32,71 @@ def home(request):
 
 @login_required
 def add_goal(request):
+
+    errors = []
+    result = {}
+
+    if request.method == 'POST':
+        subject = request.POST['title']
+        duration = request.POST['duration']
+        due_date = request.POST['due_date']
+
+        if subject and duration and due_date:
+            goal = Goal()
+            goal.subject = subject
+            goal.duration = duration
+            goal.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+            goal.created_date = datetime.now()
+            goal.save()
+
+            return HttpResponseRedirect('/goal/list')
+        else:
+            errors.append('incomplete data')
+
     return render_to_response('simgtd/add_goal.html', RequestContext(request))
 
 
 @login_required
+def edit_goal(request, gid):
+
+    errors = []
+    result = {}
+
+    if request.method == 'POST':
+
+        subject = request.POST['title']
+        duration = request.POST['duration']
+        due_date = request.POST['due_date']
+
+        if subject and duration and due_date:
+            goal = Goal.objects.get(id=gid)
+            goal.subject = subject
+            goal.duration = duration
+            goal.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+            goal.save()
+
+            return HttpResponseRedirect('/goal/list')
+        else:
+            errors.append('incomplete data')
+    else:
+
+        goal = Goal.objects.get(id=gid)
+
+    return render_to_response('simgtd/edit_goal.html',
+                              RequestContext(request, {'goal': goal}))
+
+
+@login_required
 def goals(request):
-    return render_to_response('simgtd/goals.html', RequestContext(request))
+    all_goals = Goal.objects.order_by('-start_date')
+
+    return render_to_response('simgtd/goal_list.html',
+                              RequestContext(request, {'goals': all_goals}))
+
+
+@login_required
+def action_list(request):
+    return render_to_response('simgtd/action_list.html', RequestContext(request))
 
 
 def login(request):

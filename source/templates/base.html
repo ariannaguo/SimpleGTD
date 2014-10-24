@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <link type="text/css" href="{{ STATIC_URL }}css/gtd.css" rel="stylesheet">
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Simple GTD</title>
+
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui.css">
+    <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/gtd.css">
+
+    <script src="{{ STATIC_URL }}scripts/jquery.js"></script>
+    <script src="{{ STATIC_URL }}scripts/jquery-ui.js"></script>
+
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+        });
+    </script>
 </head>
 <body>
-    <div id="header">
-        <div class="row">
+<div id="header">
+    <div class="row">
         <div class="header-primary">
             <a href="/">
-                <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD" />
+                <img src="{{ STATIC_URL }}images/logo.png" alt="Simple GTD"/>
             </a>
         </div>
         <div class="header-secondary">
@@ -20,26 +31,26 @@
             <a class="header_account" href="/admin/">manage site</a> |
             <a class="header_account" href="/logout/">logout</a>
         </div>
-        </div>
-    </div>
-
-    <div id="navigation">
-        <div id="icon_menu_block">
-
-            <a href="/goals" class="menu">
-                <span class="icon_menu"><img src="{{ STATIC_URL }}images/goals_basket.png" alt="Goals basket"></span>
-                <span class="icon_menu_subtitle">Goals basket</span>
-            </a>
-            <a href="Home_daily_list.html" class="menu">
-                <span class="icon_menu"><img src="{{ STATIC_URL }}images/list.png" alt="Daily/Weekly list"></span>
-                <span class="icon_menu_subtitle">Daily / Weekly list</span>
-            </a>
-        </div>
-    </div>
-
-    <div id="content">
-        {% block content %}{% endblock %}
     </div>
 </div>
+
+<div id="navigation">
+    <div id="icon_menu_block">
+
+        <a href="/goal/list" class="menu">
+            <span class="icon_menu"><img src="{{ STATIC_URL }}images/goals_basket.png" alt="Goals basket"></span>
+            <span class="icon_menu_subtitle">Goals basket</span>
+        </a>
+        <a href="/action/list" class="menu">
+            <span class="icon_menu"><img src="{{ STATIC_URL }}images/list.png" alt="Daily/Weekly list"></span>
+            <span class="icon_menu_subtitle">Daily / Weekly list</span>
+        </a>
+    </div>
+</div>
+
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+
 </body>
 </html>

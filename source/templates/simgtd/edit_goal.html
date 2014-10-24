@@ -1,30 +1,23 @@
 {% extends "base.html" %}
 
-{% block title %}Add Goal{% endblock %}
+{% block title %}Edit Goal{% endblock %}
 
 {% block content %}
 
-    <form action="/goal/add/" method="post">
+    <form action="/goal/edit/{{ goal.id }}" method="post">
         {% csrf_token %}
         <div id="add_goal_setting">
             <textarea type="text" id="quickTitle" name="title"
                       value placeholder="Add a goal..." autofocus="auotofocus"
-                      style="height:30px"></textarea>
+                      style="height:30px">{{ goal.subject }}</textarea>
             <div class="field">
                 <label class="field_label"  for="duration">Duration (days)</label>
-                <input id="duration" type="number" name="duration" value="1" class="field_label_input">
+                <input id="duration" type="number" name="duration" value="{{ goal.duration }}" class="field_label_input">
             </div>
             <div class="field">
                 <label class="field_label" for="due_date">Due Date</label>
-                <input id="due_date" type="date" name="due_date" class="field_label_input">
+                <input id="due_date" type="date" name="due_date" class="field_label_input" value="{{ goal.due_date }}">
             </div>
-{#            <div class="field">#}
-{#                <label class="field_label" for="goal_actions">Actions</label>#}
-{#                <a class="field_label_input add_button">+</a>#}
-{#            </div>#}
-{#            <div class="actions"><a>action 1</a></div>#}
-{#            <div class="actions"><a>action 2</a></div>#}
-
             <div class="field_button">
                 <input type="submit" class="save" value="Save">
                 <a href="/goal/list" class="cancel">Cancel</a>
