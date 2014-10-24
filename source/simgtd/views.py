@@ -3,7 +3,7 @@ import datetime
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
@@ -17,26 +17,27 @@ def say(request):
     says.append(datetime.datetime.now())
     says.append('Greeting')
 
-    return render_to_response('simgtd/says.html',
-        RequestContext(request, {'says': says}))
+    return render_to_response('simgtd/says.html', RequestContext(request, {'says': says}))
 
 
 @login_required
 def about(request):
-    return render_to_response('simgtd/about.html',
-        RequestContext(request))
+    return render_to_response('simgtd/about.html', RequestContext(request))
 
 
 @login_required
 def home(request):
-    return render_to_response('simgtd/home.html',
-        RequestContext(request))
+    return render_to_response('simgtd/home.html', RequestContext(request))
 
 
 @login_required
 def add_goal(request):
-    return render_to_response('simgtd/add_goal.html',
-        RequestContext(request))
+    return render_to_response('simgtd/add_goal.html', RequestContext(request))
+
+
+@login_required
+def goals(request):
+    return render_to_response('simgtd/goals.html', RequestContext(request))
 
 
 def login(request):
@@ -46,7 +47,7 @@ def login(request):
         name = request.POST['name']
         pwd = request.POST['password']
         if name and pwd:
-            user = auth.authenticate(username = name, password = pwd)
+            user = auth.authenticate(username=name, password=pwd)
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
@@ -64,9 +65,11 @@ def login(request):
         result = login_result(name, pwd)
 
     return render_to_response('simgtd/login.html',
-            RequestContext(request, { 'errors': errors, 'result': result }))
+                              RequestContext(request, {'errors': errors, 'result': result}))
 
 
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect('/')
+
+

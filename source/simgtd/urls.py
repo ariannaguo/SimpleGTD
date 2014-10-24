@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from simgtd import views, settings
+from simgtd import views
 
 
 urlpatterns = patterns('',
@@ -15,20 +15,19 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # for auth
-    # url(r'^login/$', views.login),
-    # url(r'^logout/$', views.logout),
+    url(r'^login/', views.login),
+    url(r'^logout/', views.logout),
 
     # for test app
     url(r'^polls/', include('polls.urls', namespace='polls')),
 
     # for simple gtd
-    #url(r'^gtd/', include('gtd.urls', namespace='gtd')),
-    url(r'^say/', views.say),
     url(r'^about/', views.about),
     url(r'^gtd/', views.say),
+    url(r'^goals/', views.goals),
     url(r'^add_goal/', views.add_goal),
-    url(r'^login/', views.login),
-    url(r'^logout/', views.logout),
+    url(r'^goal/add/', views.add_goal),
+
 
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Goals{% endblock %}
+
+{% block content %}
+
+    <div id="goals_basket">
+        <a href="/add_goal" class="button add">+ ADD GOAL</a>
+        <div id="goals_list_container" class="table">
+            <table>
+                <tbody>
+                    <tr>
+                       <th class="goals" >Goals</th>
+                       <th class="durathion">Duration</th>
+                       <th class="progress">Progress</th>
+                       <th class="deadline">Due Date</th>
+                       <th class="states">States</th>
+                    </tr>
+                    <tr>
+                        <td class="goals" >Coursera: Learn python</td>
+                        <td class="duration">4 weeks</td>
+                        <td class="progress">20%</td>
+                        <td class="deadline">Nov.30</td>
+                        <td class="states">Doing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
