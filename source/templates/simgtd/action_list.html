@@ -2,10 +2,18 @@
 
 {% block title %}Actions{% endblock %}
 
+{% block loadScript %}
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 
     <div id="goals_basket">
-        <a href="/add_goal" class="button add">+ ADD GOAL</a>
+        <a href="/action/add/" class="button add">+ ADD ACTION</a>
 
         <div id="tabs">
             <ul>

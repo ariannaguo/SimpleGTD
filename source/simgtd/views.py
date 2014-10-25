@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
-from simgtd.models import login_result, Goal, Constants
+from simgtd.models import login_result, Goal, Constants, Action
 
 
 @login_required
@@ -132,3 +132,44 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 
+def action_add(request):
+
+    errors = []
+    result = {}
+
+    if request.method == 'POST':
+        subject = request.POST['action']
+        hours = request.POST['hours']
+        minutes = request.POST['minutes']
+        due_date = request.POST['due_date']
+
+        if subject:
+            action = Action()
+            action.subject = subject
+
+            if hours:
+                action.hours = int(hours)
+
+            if minutes:
+                action.hours = int(minutes)
+
+            if due_date:
+                action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+
+            check_week = int(request.POST['check_week'])
+            if request.POST['check_day']:
+                check_day = request.POST.getlist('check_day')
+                action.days = ','.join([s.encode('ascii', 'ignore') for s in check_day])
+
+            if request.POST['goal']:
+                action.goal_id = int(request.POST['goal'])
+
+            action.created_date = datetime.now()
+            action.save()
+
+            return HttpResponseRedirect('/action/list')
+
+        else:
+            errors.append('incomplete data')
+
+    return render_to_response('simgtd/add_action.html', RequestContext(request))

@@ -57,7 +57,13 @@ class Action(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
 
+    week_offset = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
+    days = models.CharField(max_length=50, null=True, blank=True)
+
     goal = models.ForeignKey(Goal, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.subject
 
 
 class login_result():
