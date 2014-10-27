@@ -24,7 +24,7 @@ body{
     top:0px;
     padding: 10px 10px 0px 10px;
     width: 96%;
-    height: 40px;
+    height: 55px;
     background-color: white;
     display: table;
 }
@@ -32,6 +32,7 @@ body{
 .header-primary {
     float:left;
     position:relative;
+    top:6px;
     left:20px;
 }
 
@@ -128,9 +129,9 @@ label {
 /* gtd */
 
 div#navigation{
-    margin:5px 85% 5px 5px;
-    padding:5px 20px 5px 5px;
-    height: 530px;
+    margin:40px 85% 5px 5px;
+    padding:5px 5px 5px 5px;
+    height: 620px;
     background: rgba(104,164,204,0.8);
     color:white;
     font-size: 12px;
