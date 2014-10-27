@@ -211,7 +211,7 @@ a.add{
     font-size: 14px;
 }
 
-table{
+table.goals_list_table{
     display: table;
     border: solid 1px #68a4cc;
     position: absolute;
@@ -222,7 +222,7 @@ table{
     font-size: 14px;
 }
 
-tbody{
+tbody.goals_list_table{
     display: table-row-group;
     vertical-align: middle;
     text-align: center;
@@ -231,14 +231,14 @@ tbody{
 
 }
 
-td,th{
+td,th.goals_list_table{
     padding: 5px;
 }
-td a{
+td.goals_list_table a{
     text-decoration: none;
 }
 
-th{
+th.goals_list_table{
     font-weight: 600;
 }
 
