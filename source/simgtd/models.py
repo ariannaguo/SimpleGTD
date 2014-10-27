@@ -56,6 +56,8 @@ class Action(models.Model):
     minutes = models.PositiveSmallIntegerField(default=0)
     start_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
+    created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
+    completed_date = models.DateTimeField(editable=False, null=True)
 
     week_offset = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
     days = models.CharField(max_length=50, null=True, blank=True)

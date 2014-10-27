@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -6,8 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.utils import timezone
 
 from simgtd.models import login_result, Goal, Constants, Action
+
+from common import dt
 
 
 @login_required
@@ -32,7 +35,6 @@ def home(request):
 
 @login_required
 def add_goal(request):
-
     errors = []
     result = {}
 
@@ -58,7 +60,6 @@ def add_goal(request):
 
 @login_required
 def edit_goal(request, gid):
-
     errors = []
     result = {}
 
@@ -94,9 +95,33 @@ def goals(request):
                               RequestContext(request, {'goals': all_goals}))
 
 
+def match_day(action, point):
+    return (action.created_date < point and action.week_offset == 1) \
+           or (action.created_date > point and action.week_offset == 0)
+
+
 @login_required
 def action_list(request):
-    return render_to_response('simgtd/action_list.html', RequestContext(request))
+    today = datetime.today()
+    last_week = dt.week_range(today, -1)
+    this_week = dt.week_range(today, 0)
+
+    actions_two_weeks = Action.objects.filter(created_date__gt=last_week[0],
+                                              created_date__lt=this_week[1])
+
+    today_start = today.date()
+    today_end = today_start + timedelta(days=1)
+    today_weekday = today.weekday() + 1
+    daily = [a for a in actions_two_weeks
+             if str(today_weekday) in a.days and
+                match_day(a,
+                          timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+
+    weekly = [a for a in actions_two_weeks
+             if match_day(a, timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+
+    return render_to_response('simgtd/action_list.html',
+                              RequestContext(request, {"daily": daily, 'weekly': weekly}))
 
 
 def login(request):
@@ -132,8 +157,13 @@ def logout(request):
     return HttpResponseRedirect('/')
 
 
-def action_add(request):
+# @login_required
+# def actions_today(request):
 
+
+
+@login_required
+def action_add(request):
     errors = []
     result = {}
 
@@ -172,4 +202,6 @@ def action_add(request):
         else:
             errors.append('incomplete data')
 
-    return render_to_response('simgtd/add_action.html', RequestContext(request))
+    all_goals = Goal.objects.order_by('-start_date')
+    return render_to_response('simgtd/add_action.html',
+                              RequestContext(request, {'goals': all_goals}))

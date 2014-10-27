@@ -19,12 +19,11 @@
         {% csrf_token %}
         <div id="add_action_setting">
             <div class="field">
-                <label class="field_label" for="action">Action</label>
+                <label class="field_label" for="action">Action *</label>
                 <input type="text" id="action" name="action" class="field_label_input">
             </div>
             <div class="field">
                 <label class="field_label">Time needed</label>
-
                 <input type="number" id="hours" name="hours" class="field_label_input time_input">
                 <label for="hours">h</label>
 
@@ -75,11 +74,9 @@
                 <label for="goal"></label>
                 <select id="goal" name="goal">
                 <option value="" selected="selected">---select a goal---</option>
-                <option value="5">Learn ML</option>
-                <option value="4">Learn Python:)</option>
-                <option value="3">new oneff</option>
-                <option value="2">add more features?</option>
-                <option value="1">First draft implementation of Goal &amp; Action</option>
+                {% for goal in goals %}
+                    <option value="{{ goal.id }}">{{ goal.subject }}</option>
+                {% endfor %}
                 </select>
             </div>
 
