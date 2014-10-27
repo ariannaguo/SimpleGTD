@@ -169,20 +169,30 @@ div#content{
     color: rgba(0,0,0,0.6);
     font-size: 12px;
 }
+/*action_list*/
+#tabs{
+    position: absolute;
+    top:50px;
+    right: 10px;
+    width:98%;
+}
 
 /*goals basket*/
-
-input.button{
+p#goal_number{
+    font-size: 14px;
+    color:rgba(0, 0, 0, 0.5) ;
+    font-weight: 600;
+}
+a.add{
     position: absolute;
     top:0px;
-    right: 0px;
+    right: 10px;
     text-align: right;
     display: block;
-    border: solid 1px rgba(0,0,0,0.5);
     padding:5px 5px;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0.5);
-    background-color: #ffffff;
+    color: white;
+    background-color: #68a4cc;
     font-size: 16px;
     font-weight: 600;
 
@@ -192,15 +202,21 @@ input.button{
     position: absolute;
     display: block;
     top:50px;
-    right: 10px;
+    right: 30px;
     width: 98%;
     padding: 5px;
     font-size: 14px;
 }
 
-.table{
+table{
     display: table;
     border: solid 1px rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top:50px;
+    right: 10px;
+    width: 98%;
+    padding: 5px;
+    font-size: 14px;
 }
 tbody{
     display: table-row-group;

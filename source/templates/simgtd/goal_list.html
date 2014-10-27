@@ -8,7 +8,7 @@
         <a href="/goal/add/" class="button add">+ ADD GOAL</a>
 
             {% if goals %}
-                <p>You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
+                <p id="goal_number">You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
 
                 <table>
                     <tbody>
