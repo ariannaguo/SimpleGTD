@@ -114,11 +114,13 @@ label {
 .blue_button {
     color:white;
     background-color: #68a4cc;
+    width: 285px;
 }
 
 .white_button{
     color: #68a4cc;
     border: solid thin rgba(0,0,0,0.2);
+    width: 280px;
 }
 
 .login_submit{
@@ -157,6 +159,7 @@ div#icon_menu_block{
 a.menu{
     text-decoration: none;
 }
+
 
 /*a.menu:hover{*/
     /*text-decoration: underline;*/
@@ -234,7 +237,7 @@ tbody.goals_list_table{
 td,th.goals_list_table{
     padding: 5px;
 }
-td.goals_list_table a{
+td a{
     text-decoration: none;
 }
 
@@ -321,6 +324,7 @@ input.save{
 a.cancel{
     margin-left: 30px;
     color: #68a4cc;
+    text-decoration: none;
 }
 
 /*add_action*/
