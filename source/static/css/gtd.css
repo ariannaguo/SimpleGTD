@@ -234,8 +234,11 @@ tbody.goals_list_table{
 
 }
 
-td,th.goals_list_table{
+td.goals_list_table,th.goals_list_table{
     padding: 5px;
+}
+th.goals,td.goals{
+    text-align: left;
 }
 td a{
     text-decoration: none;
