@@ -115,5 +115,15 @@ try:
 except ImportError as e:
     pass
 
+
+import logging
+
+logging_level = logging.INFO
+logging.basicConfig(filename='logs.txt',
+                    format='%(asctime)s - %(pathname)s - line: %(lineno)d\n  %(levelname)s: %(message)s',
+                    #datefmt = '%m/%d/%Y %I:%M:%S %p',
+                    level=logging_level)
+
+
 import socket
 print('host name: %s' % socket.gethostname())

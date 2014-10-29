@@ -1,14 +1,18 @@
 from datetime import datetime, timedelta
 
+import json
+import logging
+
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.utils import timezone
+from django.views.decorators.http import require_http_methods
 
-from simgtd.models import login_result, Goal, Constants, Action
+from simgtd.models import login_result, Goal, Action
 
 from common import dt
 
@@ -63,6 +67,7 @@ def edit_goal(request, gid):
     errors = []
     result = {}
 
+    goal = None
     if request.method == 'POST':
 
         subject = request.POST['title']
@@ -80,7 +85,6 @@ def edit_goal(request, gid):
         else:
             errors.append('incomplete data')
     else:
-
         goal = Goal.objects.get(id=gid)
 
     return render_to_response('simgtd/edit_goal.html',
@@ -114,14 +118,15 @@ def action_list(request):
     today_weekday = today.weekday() + 1
     daily = [a for a in actions_two_weeks
              if str(today_weekday) in a.days and
-                match_day(a,
-                          timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+             match_day(a,
+                       timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
 
     weekly = [a for a in actions_two_weeks
-             if match_day(a, timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+              if match_day(a, timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
 
+    all_goals = Goal.objects.order_by('-start_date')
     return render_to_response('simgtd/action_list.html',
-                              RequestContext(request, {"daily": daily, 'weekly': weekly}))
+                              RequestContext(request, {"daily": daily, 'weekly': weekly, 'goals': all_goals}))
 
 
 def login(request):
@@ -205,3 +210,53 @@ def action_add(request):
     all_goals = Goal.objects.order_by('-start_date')
     return render_to_response('simgtd/add_action.html',
                               RequestContext(request, {'goals': all_goals}))
+
+
+@login_required
+@require_http_methods(['POST'])
+def action_create(request):
+    subject = request.POST['action']
+    hours = request.POST['hours']
+    minutes = request.POST['minutes']
+    due_date = request.POST['due_date']
+
+    if subject:
+        try:
+            action = Action()
+            action.subject = subject
+
+            if hours:
+                action.hours = int(hours)
+
+            if minutes:
+                action.hours = int(minutes)
+
+            if due_date:
+                action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+
+            check_week = int(request.POST['check_week'])
+            action.week_offset = check_week
+
+            if request.POST['check_day']:
+                check_day = request.POST.getlist('check_day')
+                action.days = ','.join([s.encode('ascii', 'ignore') for s in check_day])
+                logging.info(','.join([s.encode('ascii', 'ignore') for s in check_day]))
+
+            goal_id = request.POST.get('goal', '0')
+            if goal_id:
+                action.goal_id = int(goal_id)
+
+            action.created_date = datetime.now()
+
+            action.save()
+
+            resp_data = {"aid": action.id, 'result': 'OK', 'message': 'you got it!'}
+
+        except Exception as e:
+            print(e.message)
+            logging.error(e)
+            resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'server error'}
+    else:
+        resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'incomplete data'}
+
+    return HttpResponse(json.dumps(resp_data), content_type="application/json")

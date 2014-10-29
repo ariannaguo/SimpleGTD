@@ -275,7 +275,7 @@ th.goals_list_table{
 }
 .field{
     display:block;
-    margin:15px 0px;
+    margin: 5px 0;
 }
 .field_label_input{
     width:180px;

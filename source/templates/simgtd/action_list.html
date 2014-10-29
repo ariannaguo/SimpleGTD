@@ -5,34 +5,250 @@
 {% block loadScript %}
     <script>
         $(function () {
+            // setup tabs
             $("#tabs").tabs();
+
+            // setup action dialog
+            var dialog, form,
+                    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                    dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
+                    subject = $("#action"),
+                    hours = $("#hours"),
+                    minutes = $("#minutes"),
+                    due_date = $("#due_date"),
+                    allFields = $([]).add(subject).add(hours).add(minutes).add(due_date),
+                    tips = $(".validateTips");
+
+            function updateTips(t) {
+                tips.text(t)
+                        .addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+
+            function checkLength(o, n, min, max) {
+                if (o.val().length > max || o.val().length < min) {
+                    o.addClass("ui-state-error");
+                    updateTips("Length of " + n + " must be between " +
+                            min + " and " + max + ".");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp(o, regexp, n) {
+                if (!( regexp.test(o.val()) )) {
+                    o.addClass("ui-state-error");
+                    updateTips(n);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function addAction() {
+                var valid = true;
+                allFields.removeClass("ui-state-error");
+                valid = valid && checkLength(subject, "action", 1, 100);
+                //valid = valid && checkRegexp(subject, /^[a-z]([0-9a-z_\s])+$/i, "Username may consist of a-z, 0-9, underscores, spaces and must begin with a letter.");
+                //valid = valid && checkRegexp(hours, emailRegex, "eg. ui@jquery.com");
+                valid = valid && (due_date.val().length == 0
+                                    || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
+                if (valid) {
+                    //alert('adding action');
+                    $.post('/action/create/',
+                            { csrfmiddlewaretoken: '{{ csrf_token }}',
+                              action: subject.val(),
+                              hours: '5',
+                              minutes: '5',
+                              due_date: '10/31/2014',
+                              check_week: '0',
+                              check_day: '1,3,5'
+                            },
+                            function(data) {
+                                if(data.result == 'OK') {
+                                    alert(data.message);
+                                    location.reload();
+                                }
+                                else {
+                                    alert(data.message);
+                                }
+                            }
+                    );
+                    dialog.dialog("close");
+                }
+                return valid;
+            }
+
+            dialog = $("#dialog-form").dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                buttons: {
+                    "Create an action": addAction,
+                    Cancel: function () {
+                        dialog.dialog("close");
+                    }
+                },
+                close: function () {
+                    form[0].reset();
+                    allFields.removeClass("ui-state-error");
+                }
+            });
+
+            form = dialog.find("form").on("submit", function (event) {
+                event.preventDefault();
+                addAction();
+            });
+
+            $("#create-action").button().on("click", function () {
+                dialog.dialog("open");
+            });
         });
     </script>
 {% endblock %}
 
 {% block content %}
 
+    <div id="dialog-form" title="Create new action">
+        <p class="validateTips"></p>
+
+        <form>
+            <div id="add_action_setting">
+                <div class="field">
+                    <label class="field_label" for="action">Action *</label>
+                    <input type="text" id="action" name="action" class="field_label_input">
+                </div>
+                <div class="field">
+                    <label class="field_label">Time needed</label>
+                    <input type="number" id="hours" name="hours" class="field_label_input time_input">
+                    <label for="hours">h</label>
+
+                    <input type="number" id="minutes" name="minutes" class="field_label_input time_input">
+                    <label for="minutes">m</label>
+                </div>
+                <div class="field">
+                    <label class="field_label" for="due_date">Due Date</label>
+                    <input type="text" id="due_date" name="due_date" class="field_label_input">
+                </div>
+
+                <div>
+                    <div class="field check">
+                        <label for="check_week" class="check">
+                            <input type="radio" name="check_week" class="check_week" value="0" checked>This week
+                        </label>
+                        <label for="check_week" class="check">
+                            <input type="radio" name="check_week" class="check_week" value="1">Next week
+                        </label>
+                    </div>
+                    <div class="field">
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="1">Mon
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="2">Tue
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="3">Wed
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="4">Thu
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="5">Fri
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="6">Sat
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="7">Sun
+                        </label>
+                    </div>
+
+                </div>
+
+                <div>
+                    <label for="goal"></label>
+                    <select id="goal" name="goal">
+                        <option value="" selected="selected">---select a goal---</option>
+                        {% for goal in goals %}
+                            <option value="{{ goal.id }}">{{ goal.subject }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+{#                <div>#}
+{#                    <input type="submit" class="save" value="Save">#}
+{#                    <a href="/action/list" class="cancel">Cancel</a>#}
+{#                </div>#}
+            </div>
+        </form>
+    </div>
+
+    <button id="create-action">Create new action</button>
+
     <div id="goals_basket">
         <a href="/action/add/" class="button add">+ ADD ACTION</a>
 
         <div id="tabs">
             <ul>
-                <li><a href="#tabs-1">Daily list</a></li>
-                <li><a href="#tabs-2">Weekly list</a></li>
+                <li><a href="#daily">Daily list</a></li>
+                <li><a href="#weekly">Weekly list</a></li>
             </ul>
-            <div id="tabs-1">
-                <ul>
-                    {% for action in daily %}
-                        <li>{{ action.subject }}</li>
-                    {% endfor %}
-                </ul>
+            <div id="daily">
+                {% if daily %}
+                    <table class="action_list">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Time Needed</th>
+                            <th>Due Date</th>
+                            <th>Goal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for action in daily %}
+                            <tr>
+                                <td>{{ action.subject }}</td>
+                                <td>{{ action.hours }}:{{ action.minutes }}</td>
+                                <td>{{ action.due_date|date:"N j (D)" }}</td>
+                                <td>
+                                    {% if action.goal %}{{ action.goal }}{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             </div>
-            <div id="tabs-2">
-                <ul>
-                    {% for action in weekly %}
-                        <li>{{ action.subject }}</li>
-                    {% endfor %}
-                </ul>
+            <div id="weekly">
+                {% if weekly %}
+                    <table class="action_list">
+                        <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Time Needed</th>
+                            <th>Due Date</th>
+                            <th>Goal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for action in weekly %}
+                            <tr>
+                                <td>{{ action.subject }}</td>
+                                <td>{{ action.hours }}:{{ action.minutes }}</td>
+                                <td>{{ action.due_date|date:"N j (D)" }}</td>
+                                <td>
+                                    {% if action.goal %}{{ action.goal }}{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             </div>
         </div>
 
