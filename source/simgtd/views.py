@@ -260,3 +260,20 @@ def action_create(request):
         resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'incomplete data'}
 
     return HttpResponse(json.dumps(resp_data), content_type="application/json")
+
+
+
+from django.core import serializers
+
+@login_required
+def action_get(request, aid):
+    action = Action.objects.get(id=int(aid))
+
+    if action:
+        json_data = serializers.serialize('json', [action])
+        resp_data = json_data
+        #resp_data = {"aid": int(aid), 'actions': json_data, 'result': 'OK'}
+    else:
+        resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
+
+    return HttpResponse(json.dumps(resp_data), content_type="application/json")

@@ -57,19 +57,13 @@
                 valid = valid && (due_date.val().length == 0
                                     || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
                 if (valid) {
-                    //alert('adding action');
+                    var data_save = form.serializeArray();
+                    data_save.push({ name: 'csrfmiddlewaretoken', value: '{{ csrf_token }}'});
                     $.post('/action/create/',
-                            { csrfmiddlewaretoken: '{{ csrf_token }}',
-                              action: subject.val(),
-                              hours: '5',
-                              minutes: '5',
-                              due_date: '10/31/2014',
-                              check_week: '0',
-                              check_day: '1,3,5'
-                            },
+                            data_save,
                             function(data) {
                                 if(data.result == 'OK') {
-                                    alert(data.message);
+                                    //alert(data.message);
                                     location.reload();
                                 }
                                 else {
@@ -115,9 +109,11 @@
 
     <div id="dialog-form" title="Create new action">
         <p class="validateTips"></p>
-
         <form>
             <div id="add_action_setting">
+                <div class="field">
+                    <input type="hidden" id="aid" name="aid" class="field_label_input">
+                </div>
                 <div class="field">
                     <label class="field_label" for="action">Action *</label>
                     <input type="text" id="action" name="action" class="field_label_input">
@@ -199,6 +195,7 @@
                         <thead>
                         <tr>
                             <th>Action</th>
+                            <th>Days</th>
                             <th>Time Needed</th>
                             <th>Due Date</th>
                             <th>Goal</th>
@@ -208,6 +205,7 @@
                         {% for action in daily %}
                             <tr>
                                 <td>{{ action.subject }}</td>
+                                <td>{{ action.days }}</td>
                                 <td>{{ action.hours }}:{{ action.minutes }}</td>
                                 <td>{{ action.due_date|date:"N j (D)" }}</td>
                                 <td>
@@ -225,6 +223,7 @@
                         <thead>
                         <tr>
                             <th>Action</th>
+                            <th>Days</th>
                             <th>Time Needed</th>
                             <th>Due Date</th>
                             <th>Goal</th>
@@ -234,6 +233,7 @@
                         {% for action in weekly %}
                             <tr>
                                 <td>{{ action.subject }}</td>
+                                <td>{{ action.days }}</td>
                                 <td>{{ action.hours }}:{{ action.minutes }}</td>
                                 <td>{{ action.due_date|date:"N j (D)" }}</td>
                                 <td>

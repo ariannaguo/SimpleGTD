@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^action/list/', views.action_list),
     url(r'^action/add/', views.action_add),
     url(r'^action/create/', views.action_create),
+    url(r'^action/get/(?P<aid>\d+)', views.action_get),
 
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),
