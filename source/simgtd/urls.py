@@ -29,8 +29,8 @@ urlpatterns = patterns('',
     url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),
     url(r'^action/list/', views.action_list),
     url(r'^action/add/', views.action_add),
-    url(r'^action/create/', views.action_create),
-    url(r'^action/get/(?P<aid>\d+)', views.action_get),
+    url(r'^action/update/', views.action_update),
+    url(r'^action/(?P<aid>\d+)', views.action_get),
 
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),

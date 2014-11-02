@@ -6,7 +6,7 @@ import logging
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.utils import timezone
@@ -214,22 +214,31 @@ def action_add(request):
 
 @login_required
 @require_http_methods(['POST'])
-def action_create(request):
+def action_update(request):
+
+    aid = request.POST['action_id']
     subject = request.POST['action']
     hours = request.POST['hours']
     minutes = request.POST['minutes']
     due_date = request.POST['due_date']
 
-    if subject:
+    if aid and subject:
         try:
-            action = Action()
+            action_id = int(aid)
+
+            action = None
+            if action_id <= 0:
+                action = Action()
+            else:
+                action = Action.objects.get(id=aid)
+
             action.subject = subject
 
             if hours:
                 action.hours = int(hours)
 
             if minutes:
-                action.hours = int(minutes)
+                action.minutes = int(minutes)
 
             if due_date:
                 action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
@@ -270,10 +279,10 @@ def action_get(request, aid):
     action = Action.objects.get(id=int(aid))
 
     if action:
-        json_data = serializers.serialize('json', [action])
-        resp_data = json_data
-        #resp_data = {"aid": int(aid), 'actions': json_data, 'result': 'OK'}
+        resp_data = serializers.serialize('json', [action])
+        #resp_data = {"aid": int(aid), 'actions': resp_data, 'result': 'OK'}
     else:
         resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
 
-    return HttpResponse(json.dumps(resp_data), content_type="application/json")
+    return HttpResponse(resp_data, content_type="application/json")
+    #return JsonResponse(resp_data, safe=False)
