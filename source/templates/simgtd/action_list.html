@@ -244,23 +244,29 @@
                     <table class="action_list">
                         <thead>
                         <tr>
+                            <th></th>
                             <th>Action</th>
                             <th>Days</th>
                             <th>Time Needed</th>
                             <th>Due Date</th>
                             <th>Goal</th>
+                            <th>Status</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for action in daily %}
                             <tr data-id="{{ action.id }}">
+                                <td>Done</td>
                                 <td>{{ action.subject }}</td>
                                 <td>{{ action.days }}</td>
-                                <td>{{ action.hours }}:{{ action.minutes }}</td>
+                                <td>
+                                    {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+                                </td>
                                 <td>{{ action.due_date|date:"N j (D)" }}</td>
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
+                                <td>{{ action.status }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -272,23 +278,29 @@
                     <table class="action_list">
                         <thead>
                         <tr data-id="{{ action.id }}">
+                            <th></th>
                             <th>Action</th>
                             <th>Days</th>
                             <th>Time Needed</th>
                             <th>Due Date</th>
                             <th>Goal</th>
+                            <th>Status</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for action in weekly %}
                             <tr data-id="{{ action.id }}">
+                                <td>Done</td>
                                 <td>{{ action.subject }}</td>
                                 <td>{{ action.days }}</td>
-                                <td>{{ action.hours }}:{{ action.minutes }}</td>
+                                <td>
+                                    {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+                                </td>
                                 <td>{{ action.due_date|date:"N j (D)" }}</td>
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
+                                <td>{{ action.status }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

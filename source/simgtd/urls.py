@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
+from simgtd.login_views import logout, login
+
 admin.autodiscover()
 
 from simgtd import views
@@ -15,8 +17,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # for auth
-    url(r'^login/', views.login),
-    url(r'^logout/', views.logout),
+    url(r'^login/', login),
+    url(r'^logout/', logout),
 
     # for test app
     url(r'^polls/', include('polls.urls', namespace='polls')),
@@ -28,7 +30,6 @@ urlpatterns = patterns('',
     url(r'^goal/add/', views.add_goal),
     url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),
     url(r'^action/list/', views.action_list),
-    url(r'^action/add/', views.action_add),
     url(r'^action/update/', views.action_update),
     url(r'^action/(?P<aid>\d+)', views.action_get),
 

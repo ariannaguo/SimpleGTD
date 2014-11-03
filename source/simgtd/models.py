@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.contrib.auth.models import User, Group
 
 
 class Constants(object):
@@ -13,6 +14,8 @@ class Constants(object):
     priority_low = 1
     priority_normal = 2
     priority_high = 3
+
+    user_admin = 1
 
 
 class Status(models.Model):
@@ -41,6 +44,8 @@ class Goal(models.Model):
     created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
     completed_date = models.DateTimeField(editable=False, null=True)
 
+    created_by = models.ForeignKey(User, default=Constants.user_admin)
+
     progress = models.PositiveSmallIntegerField(default=0)
     status = models.ForeignKey(Status, default=Constants.status_not_started)
     priority = models.ForeignKey(Priority, default=Constants.priority_normal)
@@ -57,18 +62,31 @@ class Action(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
     created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
+    created_by = models.ForeignKey(User, default=Constants.user_admin)
+
     completed_date = models.DateTimeField(editable=False, null=True)
 
     week_offset = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
     days = models.CharField(max_length=50, null=True, blank=True)
+
+    status = models.ForeignKey(Status, default=Constants.status_not_started)
 
     goal = models.ForeignKey(Goal, null=True, blank=True)
 
     def __unicode__(self):
         return self.subject
 
+    def time(self):
+        ts = ''
+        if self.hours > 0:
+            ts = ts + str(self.hours) + ' hours'
+        if self.minutes > 0:
+            ts = ts + str(self.minutes) + ' minutes'
 
-class login_result():
+        return ts
+
+
+class LoginResult():
     def __init__(self, name, password):
         self.name = name
         self.password = password
