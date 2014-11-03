@@ -2,6 +2,28 @@
 
 {% block title %}Goals{% endblock %}
 
+{% block loadScript %}
+    <script>
+        $(function () {
+            $(".goals_list_table td a").on('click', function() {
+                var gid = $(this).closest("tr").data("id");
+                var sid = $(this).data("sid");
+                if(gid && sid) {
+                    $.post( "/goal/status/" + gid,
+                        { csrfmiddlewaretoken: '{{ csrf_token }}', sid: sid },
+                        function(data) {
+                            if(data.result == 'OK'){
+                                location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 
     <div id="goals_basket">
@@ -17,15 +39,26 @@
                            <th class="duration">Duration</th>
                            <th class="progress">Progress</th>
                            <th class="deadline">Due Date</th>
-                           <th class="states">State</th>
+                           <th class="states">Status</th>
+                           <th>Actions</th>
                         </tr>
                         {% for goal in goals %}
-                        <tr class="goals_list_table">
+                        <tr class="goals_list_table" data-id="{{ goal.id }}">
                             <td class="goals"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
                             <td class="duration">{{ goal.duration }} days</td>
                             <td class="progress">{{ goal.progress }}</td>
                             <td class="deadline">{{ goal.due_date|date:"N j (D)" }}</td>
                             <td class="states">{{ goal.status }}</td>
+                            <td>
+                                {% if goal.status_id == 1 %}
+                                    <a href="#" data-sid="2">Do It</a>
+                                    | <a href="#" data-sid="3">Done</a>
+                                {% endif %}
+                                {% if goal.status_id == 2 %}
+                                    <a href="#" data-sid="1">Do It Later</a>
+                                    | <a href="#" data-sid="3">Done</a>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -6,7 +6,17 @@
     <script>
         $(function () {
             // setup tabs
-            $("#tabs").tabs();
+            if(!$.cookie('action_tab')) {
+                $.cookie('action_tab', 1);
+            }
+
+            var action_tab = parseInt($.cookie('action_tab'));
+            $("#tabs").tabs({
+                active: action_tab,
+                activate: function(event, ui) {
+                    $.cookie('action_tab', ui.newTab.index());
+                }
+            });
 
             // setup action dialog
             var dialog, form,
@@ -148,9 +158,32 @@
                 }, "json");
             });
 
+            $(".action_list tbody input").on("click", function() {
+                if($(this).is(":checked")){
+                    var aid = $(this).closest("tr").data("id");
+                    $.post('/action/status/' + aid,
+                            { csrfmiddlewaretoken: "{{ csrf_token }}", sid: 3 },
+                            function(data) {
+                                if(data.result == 'OK') {
+                                    location.reload();
+                                }
+                                else {
+                                    alert(data.message);
+                                }
+                            }, "json"
+                    );
+                }
+            });
+
             due_date.datepicker({
                 showOtherMonths: true,
                 selectOtherMonths: true
+            });
+
+            $("tr[class='done'] input[type='checkbox']").each(function() {
+                var box = $(this);
+                box.prop("checked", true);
+                box.prop("disabled", true);
             });
         });
     </script>
@@ -232,7 +265,7 @@
 
     <button id="create-action" class="button add">+ ADD ACTION</button>
 
-    <div id="goals_basket">
+    <div id="actions">
 
         <div id="tabs">
             <ul>
@@ -255,8 +288,8 @@
                         </thead>
                         <tbody>
                         {% for action in daily %}
-                            <tr data-id="{{ action.id }}">
-                                <td>Done</td>
+                            <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                                <td><input type="checkbox" name="complete"></td>
                                 <td>{{ action.subject }}</td>
                                 <td>{{ action.days }}</td>
                                 <td>
@@ -266,7 +299,7 @@
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
-                                <td>{{ action.status }}</td>
+                                <td>{{ action.done }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -289,8 +322,8 @@
                         </thead>
                         <tbody>
                         {% for action in weekly %}
-                            <tr data-id="{{ action.id }}">
-                                <td>Done</td>
+                            <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                                <td><input type="checkbox" name="complete"></td>
                                 <td>{{ action.subject }}</td>
                                 <td>{{ action.days }}</td>
                                 <td>
@@ -300,7 +333,7 @@
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
-                                <td>{{ action.status }}</td>
+                                <td>{{ action.done }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

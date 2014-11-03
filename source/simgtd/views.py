@@ -10,7 +10,7 @@ from django.template.context import RequestContext
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from simgtd.models import Goal, Action
+from simgtd.models import Goal, Action, Constants
 from common import dt
 
 
@@ -86,10 +86,29 @@ def edit_goal(request, gid):
 @login_required
 def goals(request):
     all_goals = user_goals(request).filter(created_by_id=user_id(request))\
-                                   .order_by('-start_date')
+                                   .order_by('status_id', '-start_date')
 
     return render_to_response('simgtd/goal_list.html',
                               RequestContext(request, {'goals': all_goals}))
+
+
+@login_required
+@require_http_methods(['POST'])
+def goal_status(request, gid):
+
+    gid = int(gid)
+    sid = int(request.POST['sid'])
+    if sid in [1, 2, 3] and gid > 0:
+        goal = user_goals(request).get(id=gid)
+        goal.status_id = sid
+        goal.save()
+
+        resp_data = {'gid': gid, 'result': 'OK'}
+    else:
+        resp_data = {'gid': gid, 'result': 'ERROR'}
+
+    return HttpResponse(json.dumps(resp_data), content_type="application/json")
+
 
 
 def match_day(action, point):
@@ -116,7 +135,8 @@ def action_list(request):
     this_week = dt.week_range(today, 0)
 
     actions_two_weeks = user_actions(request).filter(created_date__gt=last_week[0],
-                                                     created_date__lt=this_week[1])
+                                                     created_date__lt=this_week[1])\
+        .exclude(goal__status_id=Constants.status_completed)
 
     today_start = today.date()
     today_end = today_start + timedelta(days=1)
@@ -126,10 +146,12 @@ def action_list(request):
              match_day(a,
                        timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
 
+    daily.sort(key=lambda a : a.status_id)
     weekly = [a for a in actions_two_weeks
               if match_day(a, timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+    weekly.sort(key=lambda a : a.status_id)
 
-    all_goals = user_goals(request).order_by('-start_date')
+    all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
     return render_to_response('simgtd/action_list.html',
                               RequestContext(request, {"daily": daily, 'weekly': weekly, 'goals': all_goals}))
 
@@ -212,3 +234,20 @@ def action_get(request, aid):
     return HttpResponse(resp_data, content_type="application/json")
     #return JsonResponse(resp_data, safe=False)
 
+
+@login_required
+@require_http_methods(['POST'])
+def action_status(request, aid):
+
+    aid = int(aid)
+    sid = int(request.POST['sid'])
+    if sid in [1, 2, 3] and aid > 0:
+        action = user_actions(request).get(id=aid)
+        action.status_id = sid
+        action.save()
+
+        resp_data = {'aid': aid, 'result': 'OK'}
+    else:
+        resp_data = {'aid': aid, 'result': 'ERROR'}
+
+    return HttpResponse(json.dumps(resp_data), content_type="application/json")

@@ -85,6 +85,12 @@ class Action(models.Model):
 
         return ts
 
+    def done(self):
+        if self.status_id == Constants.status_completed:
+            return 'done'
+        else:
+            return 'in progress'
+
 
 class LoginResult():
     def __init__(self, name, password):

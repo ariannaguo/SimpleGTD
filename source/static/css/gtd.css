@@ -343,3 +343,9 @@ a.cancel{
 label.check{
     font-weight: 600;
 }
+
+/* action list */
+.action_list tr.done {
+    color: #777777;
+    text-decoration: line-through;
+}
