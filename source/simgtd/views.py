@@ -10,6 +10,7 @@ from django.template.context import RequestContext
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
+from simgtd import gtd_settings
 from simgtd.models import Goal, Action, Constants
 from common import dt
 
@@ -98,17 +99,26 @@ def goal_status(request, gid):
 
     gid = int(gid)
     sid = int(request.POST['sid'])
+
     if sid in [1, 2, 3] and gid > 0:
+
         goal = user_goals(request).get(id=gid)
+
+        if sid == Constants.status_in_process and goal.status_id != Constants.status_in_process:
+            count = user_goals(request).filter(status_id=Constants.status_in_process).count()
+            if count >= gtd_settings.max_in_process:
+                resp_data = {'gid': gid, 'result': 'ERROR',
+                             'message': 'Exceeding the limit of {0}'.format(gtd_settings.max_in_process)}
+                return HttpResponse(json.dumps(resp_data), content_type="application/json")
+
         goal.status_id = sid
         goal.save()
-
         resp_data = {'gid': gid, 'result': 'OK'}
+
     else:
-        resp_data = {'gid': gid, 'result': 'ERROR'}
+        resp_data = {'gid': gid, 'result': 'ERROR', 'message': 'Invalid arguments'}
 
     return HttpResponse(json.dumps(resp_data), content_type="application/json")
-
 
 
 def match_day(action, point):
