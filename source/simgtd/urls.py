@@ -5,7 +5,7 @@ from simgtd.login_views import logout, login
 
 admin.autodiscover()
 
-from simgtd import views
+from simgtd import views, mobile_views
 
 
 urlpatterns = patterns('',
@@ -36,10 +36,12 @@ urlpatterns = patterns('',
     url(r'^action/(?P<aid>\d+)', views.action_get),
     url(r'^action/status/(?P<aid>\d+)', views.action_status),
 
+    url(r'^sms/', mobile_views.send_sms),
+
     # for NLP
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),
 
     # for common
-    url(r'^$', views.home),
+    url(r'^$', views.action_list),
     # url(r'^__main__/', views.main),
 )

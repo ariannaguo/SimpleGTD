@@ -4,13 +4,14 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
-from simgtd import gtd_settings
+from simgtd import settings, gtd_settings
 from simgtd.models import Goal, Action, Constants
 from common import dt
 
@@ -18,6 +19,7 @@ from common import dt
 @login_required
 def say(request):
     says = ['Do what you like and like what you are doing.', datetime.now(), 'Greeting']
+    send_mail(says[0], 'message here', settings.EMAIL_ADMIN, ['admin@simplegtd.me'], fail_silently=False)
     return render_to_response('simgtd/says.html', RequestContext(request, {'says': says}))
 
 
@@ -106,9 +108,9 @@ def goal_status(request, gid):
 
         if sid == Constants.status_in_process and goal.status_id != Constants.status_in_process:
             count = user_goals(request).filter(status_id=Constants.status_in_process).count()
-            if count >= gtd_settings.max_in_process:
+            if count >= gtd_settings.max_goal_in_process:
                 resp_data = {'gid': gid, 'result': 'ERROR',
-                             'message': 'Exceeding the limit of {0}'.format(gtd_settings.max_in_process)}
+                             'message': 'Exceeding the limit of {0}'.format(gtd_settings.max_goal_in_process)}
                 return HttpResponse(json.dumps(resp_data), content_type="application/json")
 
         goal.status_id = sid

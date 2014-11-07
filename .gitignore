@@ -1,3 +1,5 @@
 */.idea/*
 *.pyc
 source/logs.txt
+source/common/leancloud.py
+*.pyc

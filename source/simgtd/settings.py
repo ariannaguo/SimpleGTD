@@ -81,6 +81,12 @@ USE_TZ = True
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
 
+# Email
+EMAIL_ADMIN = 'simplegtd'
+EMAIL_HOST = 'smtp'
+EMAIL_PORT = '25'
+EMAIL_HOST_USER = 'simplegtd'
+EMAIL_HOST_PASSWORD = 'password'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -109,6 +115,11 @@ TEMPLATE_LOADERS = (
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates/'),
 )
+
+# LeanCloud
+LeanCloudAppId = ''
+LeanCloudAppKey = ''
+
 
 try:
     from local_gtd_settings import *
