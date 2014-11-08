@@ -116,6 +116,15 @@
             }
 
             $("#create-action").button().on("click", function () {
+                var due = new Date();
+                due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
+
+                var weekday =due.getDay();
+                if(weekday == 0) {
+                    weekday = 7;
+                }
+                $(".check_day[value=" + weekday + "]").prop("checked", true);
+
                 open_dialog(-1, "Adding a new action");
             });
 
@@ -136,7 +145,7 @@
 
                         var week = action.week_offset;
                         if(week !== null) {
-                            $("#week").find("[value=" + week + "]").prop("checked", true)
+                            $("#week").find("[value=" + week + "]").prop("checked", true);
                         }
                         var days = action.days;
                         if(days !== null) {

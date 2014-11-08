@@ -17,9 +17,9 @@ from common import dt
 
 
 @login_required
-def say(request):
+def email(request):
     says = ['Do what you like and like what you are doing.', datetime.now(), 'Greeting']
-    send_mail(says[0], 'message here', settings.EMAIL_ADMIN, ['admin@simplegtd.me'], fail_silently=False)
+    send_mail(says[0], 'message here', 'SimpleGTD <' + settings.EMAIL_ADMIN + '>', ['anderscui@gmail.com'], fail_silently=False)
     return render_to_response('simgtd/says.html', RequestContext(request, {'says': says}))
 
 

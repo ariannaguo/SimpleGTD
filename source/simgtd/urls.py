@@ -25,7 +25,7 @@ urlpatterns = patterns('',
 
     # for simple gtd
     url(r'^about/', views.about),
-    url(r'^gtd/', views.say),
+    url(r'^email/', views.email),
     url(r'^goal/list/', views.goals),
     url(r'^goal/add/', views.add_goal),
     url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),

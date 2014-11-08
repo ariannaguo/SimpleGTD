@@ -32,7 +32,7 @@ class Command(BaseCommand):
             #self.stdout.write(now.strftime("%B %d, %Y"))
             #send_due_notification(anders, 'duedate', 'goal', g.subject, now.strftime("%b %d"), 'http://simplegtd.me/')
             send_due_notification2(anders, 'duedate', 'goal', g.subject,
-                                   g.due_date.strftime("%b %d, %A"), 'http://simplegtd.me/')
+                                   g.due_date.strftime("%b %d, %A"), 'http://simplegtd.me/goal/list')
             self.stdout.write('sms sent')
 
             self.stdout.write('Goal "%s"' % g.subject)

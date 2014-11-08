@@ -92,6 +92,27 @@ class Action(models.Model):
             return 'in progress'
 
 
+class ActionComment(models.Model):
+
+    action = models.ForeignKey(Action)
+    comment = models.TextField(max_length=500, blank=True)
+    html = models.TextField(max_length=1000, editable=False, blank=True)
+
+    created_by = models.ForeignKey(User, default=Constants.user_admin)
+    created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
+
+
+class Setting(models.Model):
+    user = models.OneToOneField(User, primary_key=True)
+
+    mobile_phone = models.TextField(max_length=20, null=True, blank=True)
+    remind_email = models.EmailField(null=True, blank=True)
+    remind_goal = models.NullBooleanField(default=True, blank=True)
+    remind_action = models.NullBooleanField(default=False, blank=True)
+
+    site_url = models.URLField(null=True)
+
+
 class LoginResult():
     def __init__(self, name, password):
         self.name = name

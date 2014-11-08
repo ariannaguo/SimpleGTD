@@ -2,7 +2,7 @@ import datetime
 from django.contrib import admin
 
 from simgtd import settings as app_settings
-from simgtd.models import Constants, Status, Priority, Goal, Action
+from simgtd.models import Constants, Status, Priority, Goal, Action, ActionComment, Setting
 
 
 class GoalAdmin(admin.ModelAdmin):
@@ -25,6 +25,8 @@ admin.site.register(Status)
 admin.site.register(Priority)
 admin.site.register(Goal, GoalAdmin)
 admin.site.register(Action)
+admin.site.register(ActionComment)
+admin.site.register(Setting)
 
 
 if app_settings.DEBUG:
