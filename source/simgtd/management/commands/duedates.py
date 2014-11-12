@@ -1,12 +1,12 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
-from django.utils import translation
+from django.utils import timezone
 
 from common import dt
 from common.leancloud import send_due_notification, send_due_notification2
-from simgtd import settings
+from simgtd import settings, gtd_settings
 from simgtd.models import Goal, Constants
 
 
@@ -17,9 +17,23 @@ class Command(BaseCommand):
         parser.add_argument('max', nargs='?', type=int)
 
     def notify_email(self, user, goals):
+
+        now = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        overdue = [g for g in goals if g.due_date < now]
+        will_be_due = [g for g in goals if g.due_date >= now]
+
+        self.stdout.write(str(len(goals)))
+        self.stdout.write(str(len(overdue)))
+        self.stdout.write(str(len(will_be_due)))
+
         mail = render_to_string('simgtd/email/duedate.html',
-                                {'name': user.first_name, 'goal_will_be_due': goals})
+                                {'name': user.first_name,
+                                 'root': settings.SITE_ROOT,
+                                 'goal_overdue': overdue,
+                                 'goal_will_be_due': will_be_due})
+
         self.stdout.write(user.first_name)
+        self.stdout.write(mail)
         send_mail('Overdue Goals', '',
                   'SimpleGTD <' + settings.EMAIL_ADMIN + '>',
                   [user.email],
@@ -34,16 +48,16 @@ class Command(BaseCommand):
         # translation.activate('zh-cn')
 
         now = datetime.now()
+        due = now + timedelta(days=gtd_settings.notify_before_days)
+        self.stdout.write(str(due))
         two_months_ago = dt.week_range(now, -8)
-        this_week = dt.week_range(now, 0)
         due_goals = Goal.objects.filter(created_date__gt=two_months_ago[0],
-                                        created_date__lt=this_week[1],
-                                        status_id=Constants.status_in_process,
-                                        due_date__lt=now)
+                                        due_date__lt=due)\
+                                .exclude(status_id=Constants.status_completed)
 
         user_goals = {}
         for g in due_goals:
-            if g.created_by_id not in user_goals.keys():
+            if g.created_by not in user_goals.keys():
                 user_goals[g.created_by] = []
             user_goals[g.created_by].append(g)
 

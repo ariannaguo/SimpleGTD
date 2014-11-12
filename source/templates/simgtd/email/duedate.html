@@ -4,17 +4,28 @@
 
 {% block content %}
     <p><strong>Hi {{ name }},</strong></p>
-    {% if goal_will_be_due %}
+
+    {% if goal_overdue %}
         <p>You have the following goals that are overdue, hurry up!</p>
         <ul>
-            {% for goal in goal_will_be_due %}
-                <li>{{ goal.subject }}</li>
+            {% for goal in goal_overdue %}
+                <li><a href="{{ root }}/goal/{{ goal.id }}">{{ goal.subject }}</a></li>
             {% endfor %}
         </ul>
-    {% else %}
-        <p>Well done, you've completed all of your goals!</p>
+        <hr />
     {% endif %}
 
-    <hr />
+    {% if goal_will_be_due %}
+        <p>You have the following goals that will be overdue, hurry up!</p>
+        <ul>
+            {% for goal in goal_will_be_due %}
+                <li><a href="{{ root }}/goal/{{ goal.id }}">{{ goal.subject }}</a></li>
+            {% endfor %}
+        </ul>
+        <hr />
+    {% else %}
+        <p>Well done! All of your goals are in your control:)</p>
+    {% endif %}
+
     <p>Remember: Stay hungry, stay foolish.</p>
 {% endblock %}

@@ -49,6 +49,6 @@ urlpatterns = patterns('',
     #url(r'^nlp/', include('nlp.urls', namespace='nlp')),
 
     # for common
-    url(r'^$', views.action_list),
+    url(r'^$', views.action_list, name='site_root'),
     # url(r'^__main__/', views.main),
 )

@@ -77,6 +77,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Site
+SITE_ROOT = 'http://www.simplegtd.me'
+
 # Authentication
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
