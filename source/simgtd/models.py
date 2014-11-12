@@ -105,12 +105,18 @@ class ActionComment(models.Model):
 class Setting(models.Model):
     user = models.OneToOneField(User, primary_key=True)
 
-    mobile_phone = models.TextField(max_length=20, null=True, blank=True)
-    remind_email = models.EmailField(null=True, blank=True)
+    mobile_phone = models.CharField(max_length=20, null=True, blank=True)
+
+    remind_sms = models.NullBooleanField(default=True, blank=True)
+    remind_email = models.NullBooleanField(default=True, blank=True)
+
     remind_goal = models.NullBooleanField(default=True, blank=True)
     remind_action = models.NullBooleanField(default=False, blank=True)
 
     site_url = models.URLField(null=True)
+
+    def __unicode__(self):
+        return self.user.get_full_name()
 
 
 class LoginResult():

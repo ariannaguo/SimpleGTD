@@ -2,10 +2,11 @@ from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
 from simgtd.login_views import logout, login
+from simgtd.user_views import profile, sms
 
 admin.autodiscover()
 
-from simgtd import views, mobile_views
+from simgtd import views, mobile_views, internal_views
 
 
 urlpatterns = patterns('',
@@ -20,12 +21,18 @@ urlpatterns = patterns('',
     url(r'^login/', login),
     url(r'^logout/', logout),
 
+    # for user
+    url(r'^me', profile),
+    url(r'^mine/sms/', sms),
+
     # for test app
     url(r'^polls/', include('polls.urls', namespace='polls')),
 
     # for simple gtd
     url(r'^about/', views.about),
     url(r'^email/', views.email),
+    url(r'^temp/', internal_views.use_template),
+
     url(r'^goal/list/', views.goals),
     url(r'^goal/add/', views.add_goal),
     url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),

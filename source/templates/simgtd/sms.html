@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}SMS service{% endblock %}
+
+{% block content %}
+
+    {% if user.is_superuser %}
+        <form action="/mine/sms/" method="post">
+            {% csrf_token %}
+            <label for="msg">Your short message</label>
+            <br />
+            <textarea id="msg" name="msg" rows="10" cols="50"></textarea>
+            <br />
+
+            <input type="submit" id="send" name="send" value="Send">
+        </form>
+    {% else %}
+        You need to be a super man.
+    {% endif %}
+
+{% endblock %}

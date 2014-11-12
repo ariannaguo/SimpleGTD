@@ -4,5 +4,6 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 
 
-def send_sms(request):
-    return render_to_response('simgtd/sms.html', RequestContext(request))
+def use_template(request):
+    rendered = render_to_string('simgtd/email/duedate.html', {'name': request.user.get_full_name()})
+    return HttpResponse(rendered)

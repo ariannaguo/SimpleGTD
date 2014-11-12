@@ -1,0 +1,20 @@
+{% extends "simgtd/email/email_base.html" %}
+
+{% block title %}Email Notification{% endblock %}
+
+{% block content %}
+    <p><strong>Hi {{ name }},</strong></p>
+    {% if goal_will_be_due %}
+        <p>You have the following goals that are overdue, hurry up!</p>
+        <ul>
+            {% for goal in goal_will_be_due %}
+                <li>{{ goal.subject }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Well done, you've completed all of your goals!</p>
+    {% endif %}
+
+    <hr />
+    <p>Remember: Stay hungry, stay foolish.</p>
+{% endblock %}

@@ -1,13 +1,13 @@
 from datetime import datetime
+from django.core.mail import send_mail
 from django.core.management.base import BaseCommand, CommandError
+from django.template.loader import render_to_string
 from django.utils import translation
 
 from common import dt
 from common.leancloud import send_due_notification, send_due_notification2
+from simgtd import settings
 from simgtd.models import Goal, Constants
-
-
-anders = '13212345678'
 
 
 class Command(BaseCommand):
@@ -15,6 +15,20 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('max', nargs='?', type=int)
+
+    def notify_email(self, user, goals):
+        mail = render_to_string('simgtd/email/duedate.html',
+                                {'name': user.first_name, 'goal_will_be_due': goals})
+        self.stdout.write(user.first_name)
+        send_mail('Overdue Goals', '',
+                  'SimpleGTD <' + settings.EMAIL_ADMIN + '>',
+                  [user.email],
+                  html_message=mail,
+                  fail_silently=False)
+
+    def notify_sms(self, user, goals):
+        # TODO: send sms to user
+        sms = ''
 
     def handle(self, *args, **options):
         # translation.activate('zh-cn')
@@ -27,13 +41,22 @@ class Command(BaseCommand):
                                         status_id=Constants.status_in_process,
                                         due_date__lt=now)
 
+        user_goals = {}
         for g in due_goals:
-            self.stdout.write('sending sms')
-            #self.stdout.write(now.strftime("%B %d, %Y"))
-            #send_due_notification(anders, 'duedate', 'goal', g.subject, now.strftime("%b %d"), 'http://simplegtd.me/')
-            send_due_notification2(anders, 'duedate', 'goal', g.subject,
-                                   g.due_date.strftime("%b %d, %A"), 'http://simplegtd.me/goal/list')
-            self.stdout.write('sms sent')
+            if g.created_by_id not in user_goals.keys():
+                user_goals[g.created_by] = []
+            user_goals[g.created_by].append(g)
 
-            self.stdout.write('Goal "%s"' % g.subject)
-            # translation.deactivate()
+        # for g in due_goals:
+        # self.stdout.write('sending sms')
+        #     #self.stdout.write(now.strftime("%B %d, %Y"))
+        #     #send_due_notification(anders, 'duedate', 'goal', g.subject, now.strftime("%b %d"), 'http://simplegtd.me/')
+        #     #send_due_notification2(anders, 'duedate', 'goal', g.subject,
+        #     #                       g.due_date.strftime("%b %d, %A"), 'http://simplegtd.me/goal/list')
+        #     self.stdout.write('sms sent')
+        #
+        #     self.stdout.write('Goal "%s"' % g.subject)
+        #     # translation.deactivate()
+
+        for user in user_goals.keys():
+            self.notify_email(user, user_goals[user])
