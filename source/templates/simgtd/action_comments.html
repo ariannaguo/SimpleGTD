@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Action comments{% endblock %}
+
+{% block loadScript %}
+{% endblock %}
+
+{% block content %}
+
+    <form action="/action/{{ action.id }}/new_comment" method="post">
+        {% csrf_token %}
+        <div>
+            <h2>Add a comment for action "{{ action.subject }}"</h2>
+
+            <div class="field">
+                <label class="field_label" for="comment">Comment</label>
+                <textarea id="comment" name="comment" placeholder="add comment here..." rows="10" cols="60"></textarea>
+            </div>
+
+            <div class="field_button">
+                <input type="submit" class="save" value="Add">
+                <a href="/action/list" class="cancel">Cancel</a>
+            </div>
+
+            <div id="comments">
+                {% if action.comments.all %}
+                    <h3>Comments for "{{ action.subject }}"</h3>
+                    <ul>
+                        {% for c in action.comments.all %}
+                            <li>{{ c.comment }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}

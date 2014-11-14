@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 
 from simgtd import settings, gtd_settings
-from simgtd.models import Goal, Action, Constants
+from simgtd.models import Goal, Action, Constants, ActionComment, GoalComment
 from common import dt
 
 
@@ -151,7 +151,6 @@ def action_list(request):
         .exclude(goal__status_id=Constants.status_completed)
 
     today_start = today.date()
-    today_end = today_start + timedelta(days=1)
     today_weekday = today.weekday() + 1
     daily = [a for a in actions_two_weeks
              if str(today_weekday) in a.days and
@@ -239,12 +238,39 @@ def action_get(request, aid):
 
     if action:
         resp_data = serializers.serialize('json', [action])
-        #resp_data = {"aid": int(aid), 'actions': resp_data, 'result': 'OK'}
     else:
         resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
 
     return HttpResponse(resp_data, content_type="application/json")
-    #return JsonResponse(resp_data, safe=False)
+
+
+@login_required
+def action_comments(request, aid):
+    action = user_actions(request).get(id=int(aid))
+    return render_to_response('simgtd/action_comments.html',
+                              RequestContext(request, {'action': action}))
+
+
+@login_required
+def add_action_comment(request, aid):
+
+    comment = request.POST['comment']
+    if comment:
+        ac = ActionComment(comment=comment, action_id=aid)
+        ac.save()
+
+    return HttpResponseRedirect('/action/list/')
+
+
+@login_required
+def add_action_comment(request, gid):
+
+    comment = request.POST['comment']
+    if comment:
+        gc = GoalComment(comment=comment, goal_id=gid)
+        gc.save()
+
+    return HttpResponseRedirect('/goal/list/')
 
 
 @login_required
