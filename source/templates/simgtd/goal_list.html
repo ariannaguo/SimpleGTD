@@ -44,12 +44,12 @@
                         </tr>
                         {% for goal in goals %}
                         <tr class="goals_list_table" data-id="{{ goal.id }}">
-                            <td class="goals"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
+                            <td class="goals" width="50%"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
                             <td class="duration">{{ goal.duration }} days</td>
                             <td class="progress">{{ goal.progress }}</td>
                             <td class="deadline">{{ goal.due_date|date:"N j (D)" }}</td>
                             <td class="states">{{ goal.status }}</td>
-                            <td>
+                            <td width="15%">
                                 {% if goal.status_id == 1 %}
                                     <a href="#" data-sid="2">Do It</a>
                                     | <a href="#" data-sid="3">Done</a>
@@ -58,6 +58,9 @@
                                     <a href="#" data-sid="1">Do It Later</a>
                                     | <a href="#" data-sid="3">Done</a>
                                 {% endif %}
+                            </td>
+                            <td width="5%">
+                                <img src="{{ STATIC_URL }}images/notes.png" alt="Notes"/>
                             </td>
                         </tr>
                         {% endfor %}

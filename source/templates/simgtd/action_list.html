@@ -19,11 +19,11 @@
             });
 
             // setup action dialog
-            var dialog, form,
+            var action_dialog, action_form,
                     emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                     dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
                     action_id = $("#action_id"),
-                    subject = $("#action"),
+                    subject = $("#comment"),
                     hours = $("#hours"),
                     minutes = $("#minutes"),
                     due_date = $("#due_date"),
@@ -68,7 +68,7 @@
                 valid = valid && (due_date.val().length == 0
                                     || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
                 if (valid) {
-                    var data_save = form.serializeArray();
+                    var data_save = action_form.serializeArray();
                     data_save.push({ name: 'csrfmiddlewaretoken', value: '{{ csrf_token }}'});
                     $.post('/action/update/',
                             data_save,
@@ -82,12 +82,12 @@
                                 }
                             }
                     );
-                    dialog.dialog("close");
+                    action_dialog.dialog("close");
                 }
                 return valid;
             }
 
-            dialog = $("#dialog-form").dialog({
+            action_dialog = $("#action_dialog").dialog({
                 autoOpen: false,
                 height: 'auto',
                 width: 'auto',
@@ -95,27 +95,27 @@
                 buttons: {
                     "OK": updateAction,
                     Cancel: function () {
-                        dialog.dialog("close");
+                        action_dialog.dialog("close");
                     }
                 },
                 close: function () {
-                    form[0].reset();
+                    action_form[0].reset();
                     allFields.removeClass("ui-state-error");
                 }
             });
 
-            form = dialog.find("form").on("submit", function (event) {
+            action_form = action_dialog.find("#action_form").on("submit", function (event) {
                 event.preventDefault();
                 updateAction();
             });
 
-            function open_dialog(aid, title) {
-                dialog.dialog("open");
+            function open_action_dialog(aid, title) {
+                action_dialog.dialog("open");
                 action_id.val(aid);
-                dialog.dialog("option", "title", title);
+                action_dialog.dialog("option", "title", title);
             }
 
-            $("#create-action").button().on("click", function () {
+            $("#create_action").button().on("click", function () {
                 var due = new Date();
                 due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
 
@@ -125,7 +125,7 @@
                 }
                 $(".check_day[value=" + weekday + "]").prop("checked", true);
 
-                open_dialog(-1, "Adding a new action");
+                open_action_dialog(-1, "Adding a new action");
             });
 
             $(".action_list").on("dblclick", "tr", function(event) {
@@ -162,7 +162,7 @@
                             $("#goal").val(goal);
                         }
 
-                        open_dialog(aid, "Editing action - " + action.subject);
+                        open_action_dialog(aid, "Editing action - " + action.subject);
                     }
                 }, "json");
             });
@@ -184,6 +184,16 @@
                 }
             });
 
+            $(".action_list").tooltip({
+                items: "img",
+                content: function () {
+                    var elem = $(this);
+                    if(elem.is("img")) {
+                        return elem.closest("tr").find(".notes").html();
+                    }
+                }
+            });
+
             due_date.datepicker({
                 showOtherMonths: true,
                 selectOtherMonths: true
@@ -194,15 +204,57 @@
                 box.prop("checked", true);
                 box.prop("disabled", true);
             });
+
+            // comment dialog
+{#            var comment_action_id = $("#comment_action_id");#}
+{##}
+{#            function add_comment () {#}
+{#                alert('add comment');#}
+{#            }#}
+{##}
+{#            var note_dialog = $("#note_dialog").dialog({#}
+{#                autoOpen: false,#}
+{#                height: 'auto',#}
+{#                width: 'auto',#}
+{#                modal: true,#}
+{#                buttons: {#}
+{#                    "OK": add_comment,#}
+{#                    Cancel: function () {#}
+{#                        note_dialog.dialog("close");#}
+{#                    }#}
+{#                },#}
+{#                close: function () {#}
+{#                    comment_form[0].reset();#}
+{#                    //allFields.removeClass("ui-state-error");#}
+{#                }#}
+{#            });#}
+{##}
+{#            var comment_form = action_dialog.find("#comment_form").on("submit", function (event) {#}
+{#                event.preventDefault();#}
+{#                add_comment();#}
+{#            });#}
+{##}
+{#            function open_comment_dialog(aid, title) {#}
+{#                note_dialog.dialog("open");#}
+{#                comment_action_id.val(aid);#}
+{#                note_dialog.dialog("option", "title", title);#}
+{#            }#}
+{##}
+{#            $(".action_list img").on("click", function() {#}
+{#                var aid = $(this).data("id");#}
+{#                if(!aid) { return; }#}
+{##}
+{#                open_comment_dialog(-1, "Adding a new note for - " + aid);#}
+{#            });#}
         });
     </script>
 {% endblock %}
 
 {% block content %}
 
-    <div id="dialog-form" title="Create new action">
+    <div id="action_dialog" title="Create new action">
         <p class="validateTips"></p>
-        <form>
+        <form id="action_form">
             <div id="add_action_setting">
                 <div class="field">
                     <input type="hidden" id="action_id" name="action_id" class="field_label_input" value="-1">
@@ -272,7 +324,22 @@
         </form>
     </div>
 
-    <button id="create-action" class="button add">+ ADD ACTION</button>
+{#    <div id="note_dialog" title="Add a note">#}
+{#        <p class="validateTips"></p>#}
+{#        <form id="note_dialog">#}
+{#            <div id="add_action_comment">#}
+{#                <div class="field">#}
+{#                    <input type="hidden" id="comment_action_id" name="comment_action_id" class="field_label_input" value="-1">#}
+{#                </div>#}
+{#                <div class="field">#}
+{#                    <label class="field_label" for="comment">Comment *</label>#}
+{#                    <input type="text" id="comment" name="comment" class="field_label_input">#}
+{#                </div>#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
+
+    <button id="create_action" class="button add">+ ADD ACTION</button>
 
     <div id="actions">
 
@@ -308,7 +375,22 @@
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
-                                <td>{{ action.done }}</td>
+                                <td width="80px">{{ action.done }}</td>
+                                <td width="5%">
+                                    <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                                        <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+                                    </a>
+
+                                    {% if action.comments.all %}
+                                        <div class="notes">
+                                        <ul>
+                                            {% for c in action.comments.all %}
+                                                <li>{{ c.comment }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        </div>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -342,7 +424,22 @@
                                 <td>
                                     {% if action.goal %}{{ action.goal }}{% endif %}
                                 </td>
-                                <td>{{ action.done }}</td>
+                                <td width="80px">{{ action.done }}</td>
+                                <td width="5%">
+                                    <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                                        <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+                                    </a>
+
+                                    {% if action.comments.all %}
+                                        <div class="notes">
+                                        <ul>
+                                            {% for c in action.comments.all %}
+                                                <li>{{ c.comment }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                        </div>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>

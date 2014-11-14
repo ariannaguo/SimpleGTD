@@ -349,3 +349,7 @@ label.check{
     color: #777777;
     text-decoration: line-through;
 }
+
+.action_list .notes {
+    display: none;
+}

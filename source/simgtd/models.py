@@ -73,6 +73,8 @@ class Action(models.Model):
 
     goal = models.ForeignKey(Goal, null=True, blank=True)
 
+    # comments = models.ManyToManyField(ActionComment)
+
     def __unicode__(self):
         return self.subject
 
@@ -94,12 +96,28 @@ class Action(models.Model):
 
 class ActionComment(models.Model):
 
-    action = models.ForeignKey(Action)
+    action = models.ForeignKey(Action, related_name='comments')
     comment = models.TextField(max_length=500, blank=True)
     html = models.TextField(max_length=1000, editable=False, blank=True)
 
     created_by = models.ForeignKey(User, default=Constants.user_admin)
     created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
+
+    def __unicode__(self):
+        return '{0} - {1}'.format(self.action, self.comment)
+
+
+class GoalComment(models.Model):
+
+    goal = models.ForeignKey(Goal, related_name='comments')
+    comment = models.TextField(max_length=500, blank=True)
+    html = models.TextField(max_length=1000, editable=False, blank=True)
+
+    created_by = models.ForeignKey(User, default=Constants.user_admin)
+    created_date = models.DateTimeField(editable=False, default=datetime.datetime.now)
+
+    def __unicode__(self):
+        return '{0} - {1}'.format(self.goal, self.comment)
 
 
 class Setting(models.Model):
