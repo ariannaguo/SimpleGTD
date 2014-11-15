@@ -5,11 +5,14 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.mail import send_mail
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms import model_to_dict
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
+from taggit.models import Tag
 
 from simgtd import settings, gtd_settings
 from simgtd.models import Goal, Action, Constants, ActionComment, GoalComment
@@ -176,6 +179,7 @@ def action_update(request):
     hours = request.POST['hours']
     minutes = request.POST['minutes']
     due_date = request.POST['due_date']
+    tags = request.POST['tags']
 
     if aid and subject:
         try:
@@ -201,6 +205,11 @@ def action_update(request):
 
             if due_date:
                 action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+
+            action.tags.clear()
+            for tag in tags.split(','):
+                action.tags.add(tag.strip())
+
 
             check_week = int(request.POST['check_week'])
             action.week_offset = check_week
@@ -236,12 +245,30 @@ def action_update(request):
 def action_get(request, aid):
     action = user_actions(request).get(id=int(aid))
 
+    res = {}
     if action:
-        resp_data = serializers.serialize('json', [action])
+        # serializers are only used for django models.
+        #resp_data = serializers.serialize('json', {'action': action, 'tags': ts})
+        res['action'] = model_to_dict(action, exclude='tags')
+        res['tags'] = action.tag_list()
     else:
-        resp_data = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
+        res = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
 
-    return HttpResponse(resp_data, content_type="application/json")
+    return HttpResponse(json.dumps(res, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@login_required
+def actions_of_tag(request, tag):
+    actions = user_actions(request).filter(tags__name__in=[tag])
+    return render_to_response('simgtd/actions_of_tag.html',
+                              RequestContext(request, {'tag': tag, 'actions': actions}))
+
+
+@login_required
+def action_tags(request):
+    tags = Tag.objects.filter(action__created_by=request.user)
+    return render_to_response('simgtd/action_tags.html',
+                              RequestContext(request, {'tags': tags}))
 
 
 @login_required

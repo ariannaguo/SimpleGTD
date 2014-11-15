@@ -23,10 +23,11 @@
                     emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                     dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
                     action_id = $("#action_id"),
-                    subject = $("#comment"),
+                    subject = $("#action"),
                     hours = $("#hours"),
                     minutes = $("#minutes"),
                     due_date = $("#due_date"),
+                    tags = $("#tags"),
                     allFields = $([]).add(subject).add(hours).add(minutes).add(due_date),
                     tips = $(".validateTips");
 
@@ -134,14 +135,15 @@
 
                 $.get('/action/' + aid, function(data) {
                     if(data) {
-                        var action = data[0].fields;
-
+                        var action = data.action;
                         subject.val(action.subject);
                         hours.val(action.hours);
                         minutes.val(action.minutes);
 
                         due = new Date(Date.parse(action.due_date));
                         due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
+
+                        tags.val(data.tags.join(", "));
 
                         var week = action.week_offset;
                         if(week !== null) {
@@ -275,7 +277,10 @@
                     <label class="field_label" for="due_date">Due Date</label>
                     <input type="text" id="due_date" name="due_date" class="field_label_input">
                 </div>
-
+                <div class="field">
+                    <label class="field_label" for="tags">Tags</label>
+                    <input type="text" id="tags" name="tags" class="field_label_input">
+                </div>
                 <div>
                     <div class="field check" id="week">
                         <label for="check_week" class="check">

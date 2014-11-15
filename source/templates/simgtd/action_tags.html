@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Action Tag List"{% endblock %}
+
+{% block content %}
+
+    {% if tags %}
+        <h2>Action Tag List</h2>
+
+        <ul>
+            {% for tag in tags %}
+                <li><a href="/action/tag/{{ tag.name }}">{{ tag.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        No tags found.
+    {% endif %}
+
+    <a href="{% url 'site_root' %}action/list/">Go to actions page</a>
+
+{% endblock %}

@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import User, Group
+from taggit.managers import TaggableManager
 
 
 class Constants(object):
@@ -73,7 +74,13 @@ class Action(models.Model):
 
     goal = models.ForeignKey(Goal, null=True, blank=True)
 
-    # comments = models.ManyToManyField(ActionComment)
+    tags = TaggableManager()
+
+    def tag_list(self):
+        ts = []
+        for tag in self.tags.get_query_set():
+            ts.append(tag.name)
+        return ts
 
     def __unicode__(self):
         return self.subject
