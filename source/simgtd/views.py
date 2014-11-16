@@ -206,11 +206,6 @@ def action_update(request):
             if due_date:
                 action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
 
-            action.tags.clear()
-            for tag in tags.split(','):
-                action.tags.add(tag.strip())
-
-
             check_week = int(request.POST['check_week'])
             action.week_offset = check_week
 
@@ -227,6 +222,13 @@ def action_update(request):
                 action.created_date = datetime.now()
                 action.created_by = request.user
 
+            action.save()
+
+            action.tags.clear()
+            for tag in tags.split(','):
+                tag = tag.strip()
+                if tag:
+                    action.tags.add(tag)
             action.save()
 
             resp_data = {"aid": action.id, 'result': 'OK', 'message': 'you got it!'}
@@ -266,7 +268,7 @@ def actions_of_tag(request, tag):
 
 @login_required
 def action_tags(request):
-    tags = Tag.objects.filter(action__created_by=request.user)
+    tags = Tag.objects.filter(action__created_by=request.user).distinct()
     return render_to_response('simgtd/action_tags.html',
                               RequestContext(request, {'tags': tags}))
 
@@ -289,15 +291,15 @@ def add_action_comment(request, aid):
     return HttpResponseRedirect('/action/list/')
 
 
-@login_required
-def add_action_comment(request, gid):
-
-    comment = request.POST['comment']
-    if comment:
-        gc = GoalComment(comment=comment, goal_id=gid)
-        gc.save()
-
-    return HttpResponseRedirect('/goal/list/')
+# @login_required
+# def add_goal_comment(request, gid):
+#
+#     comment = request.POST['comment']
+#     if comment:
+#         gc = GoalComment(comment=comment, goal_id=gid)
+#         gc.save()
+#
+#     return HttpResponseRedirect('/goal/list/')
 
 
 @login_required
