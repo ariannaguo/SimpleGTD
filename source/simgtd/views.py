@@ -71,12 +71,16 @@ def edit_goal(request, gid):
         subject = request.POST['title']
         duration = request.POST['duration']
         due_date = request.POST['due_date']
+        progress = request.POST['progress']
+        status = request.POST['status']
 
         if subject and duration and due_date:
             goal = user_goals(request).get(id=gid)
             goal.subject = subject
             goal.duration = duration
             goal.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+            goal.progress = int(progress)
+            goal.status_id = int(status)
             goal.save()
 
             return HttpResponseRedirect('/goal/list')

@@ -5,10 +5,13 @@
 {% block loadScript %}
      <script>
         $(function() {
-        $( "#due_date" ).datepicker({
+            $( "#due_date" ).datepicker({
                 showOtherMonths: true,
                 selectOtherMonths: true
             });
+
+            var status = {{ goal.status.id }};
+            $("#status").val(status);
         });
     </script>
 {% endblock %}
@@ -28,6 +31,19 @@
             <div class="field">
                 <label class="field_label" for="due_date">Due Date</label>
                 <input id="due_date" type="text" name="due_date" class="field_label_input" value="{{ goal.due_date|date:'m/d/Y' }}">
+            </div>
+            <div class="field">
+                <label class="field_label" for="progress">Progress</label>
+                <input id="progress" type="text" name="progress" class="field_label_input" value="{{ goal.progress }}">
+            </div>
+            <div class="field">
+                <label class="field_label" for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="" selected="selected">---select the status---</option>
+                    <option value="1">Not Started</option>
+                    <option value="2">In Progress</option>
+                    <option value="3">Completed</option>
+                </select>
             </div>
             <div class="field_button">
                 <input type="submit" class="save" value="Save">
