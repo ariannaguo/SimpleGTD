@@ -21,10 +21,25 @@ class GoalAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class ActionAdmin(admin.ModelAdmin):
+
+    list_display = ('subject', 'hours', 'minutes', 'created_date', 'due_date', 'status')
+    list_filter = ('status', 'created_date', 'due_date')
+    date_hierarchy = 'start_date'
+    ordering = ('-start_date',)
+    search_fields = ('subject', 'memo')
+    list_per_page = 20
+
+    def save_model(self, request, obj, form, change):
+        if obj.completed_date is None and obj.status.id == Constants.status_completed:
+            obj.completed_date = datetime.datetime.now()
+        obj.save()
+
+
 admin.site.register(Status)
 admin.site.register(Priority)
 admin.site.register(Goal, GoalAdmin)
-admin.site.register(Action)
+admin.site.register(Action, ActionAdmin)
 admin.site.register(ActionComment)
 admin.site.register(Setting)
 

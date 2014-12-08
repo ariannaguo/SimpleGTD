@@ -33,8 +33,8 @@
                 <p id="goal_number">You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
 
                 <table class="goals_list_table">
-                    <tbody class="goals_list_table">
-                        <tr class="goals_list_table">
+                    <tbody>
+                        <tr>
                            <th class="goals" >Goals</th>
                            <th class="duration">Duration</th>
                            <th class="progress">Progress</th>
@@ -43,7 +43,7 @@
                            <th>Actions</th>
                         </tr>
                         {% for goal in goals %}
-                        <tr class="goals_list_table" data-id="{{ goal.id }}">
+                        <tr data-id="{{ goal.id }}">
                             <td class="goals" width="50%"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
                             <td class="duration">{{ goal.duration }} days</td>
                             <td class="progress">{{ goal.progress }}</td>

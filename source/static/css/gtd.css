@@ -1,4 +1,9 @@
 /* common */
+/** {*/
+    /*padding: 0;*/
+    /*margin: 0;*/
+/*}*/
+
 body{
     font-family:Calibri, Arial, Helvetica, sans-serif;
 }
@@ -225,7 +230,7 @@ table.goals_list_table{
     font-size: 14px;
 }
 
-tbody.goals_list_table{
+.goals_list_table tbody {
     display: table-row-group;
     vertical-align: middle;
     text-align: center;
@@ -234,17 +239,19 @@ tbody.goals_list_table{
 
 }
 
-td.goals_list_table,th.goals_list_table{
+.goals_list_table td, .goals_list_table th {
     padding: 5px;
 }
-th.goals,td.goals{
+
+th.goals, td.goals {
     text-align: left;
 }
+
 td a{
     text-decoration: none;
 }
 
-th.goals_list_table{
+.goals_list_table th {
     font-weight: 600;
 }
 
@@ -345,11 +352,50 @@ label.check{
 }
 
 /* action list */
-.action_list tr.done {
+.action_list tbody tr:hover {
+    background-color: #ffffae;
+}
+
+.action_list tbody tr.done {
     color: #777777;
     text-decoration: line-through;
 }
 
 .action_list .notes {
     display: none;
+}
+
+/* links */
+/*a:link, a:visited {*/
+    /*text-decoration: none;*/
+    /*border-bottom: 1px dotted #000;*/
+/*}*/
+
+/*a:hover, a:focus, a:active {*/
+    /*border-bottom-style: solid;*/
+/*}*/
+
+a[href^="http:"] {
+  background: url(/static/images/externalLink.gif) no-repeat right top;
+  padding-right: 10px;
+}
+
+a[href^="http://www.simplegtd.me"], a[href^="http://simplegtd.me"]  {
+  background-image: none;
+  padding-right: 0;
+}
+
+a[href^="mailto:"] {
+  background: url(/static/images/email.png) no-repeat right top;
+  padding-right: 15px;
+}
+
+a[href^="aim:"] {
+  background: url(/static/images/im.png) no-repeat right top;
+  padding-right: 15px;
+}
+
+/* forms */
+input:focus, textarea:focus {
+    background: #ffffae;
 }
