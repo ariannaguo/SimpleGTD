@@ -152,26 +152,34 @@ def action_list(request):
     today = datetime.today()
     last_week = dt.week_range(today, -1)
     this_week = dt.week_range(today, 0)
+    next_week = dt.week_range(today, 1)
 
     actions_two_weeks = user_actions(request).filter(created_date__gt=last_week[0],
-                                                     created_date__lt=this_week[1])\
+                                                     created_date__lt=next_week[1])\
         .exclude(goal__status_id=Constants.status_completed)
 
-    today_start = today.date()
+    this_week_start = timezone.make_aware(this_week[0], timezone.get_default_timezone())
+    next_week_start = timezone.make_aware(next_week[0], timezone.get_default_timezone())
+
+    # today_start = today.date()
     today_weekday = today.weekday() + 1
     daily = [a for a in actions_two_weeks
-             if str(today_weekday) in a.days and
-             match_day(a,
-                       timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
-
+             if str(today_weekday) in a.days and a.created_date < next_week_start and
+             match_day(a, this_week_start)]
     daily.sort(key=lambda a : a.status_id)
+
     weekly = [a for a in actions_two_weeks
-              if match_day(a, timezone.make_aware(this_week[0], timezone.get_default_timezone()))]
+              if a.created_date < next_week_start and match_day(a, this_week_start)]
+    weekly.sort(key=lambda a : a.status_id)
+
+    next = [a for a in actions_two_weeks
+            if a.created_date > this_week_start and match_day(a, next_week_start)]
     weekly.sort(key=lambda a : a.status_id)
 
     all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
     return render_to_response('simgtd/action_list.html',
-                              RequestContext(request, {"daily": daily, 'weekly': weekly, 'goals': all_goals}))
+                              RequestContext(request, {"daily": daily, 'weekly': weekly, 'next_week': next,
+                                                       'goals': all_goals}))
 
 
 @login_required
@@ -188,9 +196,10 @@ def action_update(request):
     if aid and subject:
         try:
             action_id = int(aid)
+            is_new = action_id <= 0
 
             action = None
-            if action_id <= 0:
+            if is_new:
                 action = Action()
             else:
                 action = user_actions(request).get(id=aid)
@@ -222,7 +231,7 @@ def action_update(request):
             if goal_id:
                 action.goal_id = int(goal_id)
 
-            if action_id <= 0:
+            if is_new:
                 action.created_date = datetime.now()
                 action.created_by = request.user
 
@@ -314,6 +323,8 @@ def action_status(request, aid):
     sid = int(request.POST['sid'])
     if sid in [1, 2, 3] and aid > 0:
         action = user_actions(request).get(id=aid)
+        if action.status_id != Constants.status_completed and sid == Constants.status_completed:
+            action.completed_date = datetime.now()
         action.status_id = sid
         action.save()
 
