@@ -352,6 +352,18 @@ label.check{
 }
 
 /* action list */
+.action_list {
+    border-spacing: 0;
+}
+
+.action_list tbody tr:nth-child(odd) {
+    background-color: #EAF4FF;
+}
+
+.action_list tbody tr:nth-child(even) {
+    background-color: #A4D1FF;
+}
+
 .action_list tbody tr:hover {
     background-color: #ffffae;
 }
