@@ -166,15 +166,15 @@ def action_list(request):
     daily = [a for a in actions_two_weeks
              if str(today_weekday) in a.days and a.created_date < next_week_start and
              match_day(a, this_week_start)]
-    daily.sort(key=lambda a : a.days)
+    daily.sort(key=lambda a : (a.status_id, a.days))
 
     weekly = [a for a in actions_two_weeks
               if a.created_date < next_week_start and match_day(a, this_week_start)]
-    weekly.sort(key=lambda a : a.days)
+    weekly.sort(key=lambda a : (a.status_id, a.days))
 
     next = [a for a in actions_two_weeks
             if a.created_date > this_week_start and match_day(a, next_week_start)]
-    weekly.sort(key=lambda a : a.days)
+    weekly.sort(key=lambda a : (a.status_id, a.days))
 
     all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
     return render_to_response('simgtd/action_list.html',
