@@ -1,12 +1,13 @@
-/* common */
-/** {*/
-    /*padding: 0;*/
-    /*margin: 0;*/
-/*}*/
+@import url("reset.css");
 
 body{
     font-family:Calibri, Arial, Helvetica, sans-serif;
 }
+
+/*#wrapper {*/
+    /*width: 920px;*/
+    /*margin: 0 auto;*/
+/*}*/
 
 /*login signup header*/
 #authHeader {
@@ -45,10 +46,21 @@ body{
     text-align: right;
     color:rgba(0,0,0,0.6);
 }
-#search{
-    display: inline-block;
-    width: 170px;
+
+/*.header-secondary input[type="submit"] {*/
+    /*height: 28px;*/
+    /*line-height: 100px;*/
+    /*margin: 0;*/
+    /*padding: 0;*/
+    /*width: 30px;*/
+    /*background: url("/static/images/bn_search.png") no-repeat scroll 95% 90% transparent;*/
+/*}*/
+
+#header .sep {
+    margin: 0 -2px 0 2px;
+    color:#717171;
 }
+
 .header_account{
     display: inline-block;
     font-size: 12px;
@@ -180,6 +192,7 @@ div#content{
     color: rgba(0,0,0,0.6);
     font-size: 12px;
 }
+
 /*action_list*/
 #tabs{
     position: absolute;
@@ -354,18 +367,20 @@ label.check{
 /* action list */
 .action_list {
     border-spacing: 0;
+    border-collapse: collapse;
 }
 
 .action_list tbody tr:nth-child(odd) {
-    background-color: #EAF4FF;
+    background-color: #edf5ff;
 }
 
-.action_list tbody tr:nth-child(even) {
-    background-color: #A4D1FF;
-}
+/*.action_list tbody tr:nth-child(even) {*/
+    /*background-color: #A4D1FF;*/
+/*}*/
 
 .action_list tbody tr:hover {
-    background-color: #ffffae;
+    background-color: #65a3df;
+    color: #fff;
 }
 
 .action_list tbody tr.done {
@@ -408,6 +423,11 @@ a[href^="aim:"] {
 }
 
 /* forms */
-input:focus, textarea:focus {
-    background: #ffffae;
+input[type="text"]:focus, textarea:focus {
+    background: #ffc;
+}
+
+.required {
+    font-size: 1em;
+    color: magenta;
 }
