@@ -154,25 +154,23 @@ def action_list(request):
     this_week = dt.week_range(today, 0)
     next_week = dt.week_range(today, 1)
 
-    actions_two_weeks = user_actions(request).filter(created_date__gt=last_week[0],
-                                                     created_date__lt=next_week[1])\
-        .exclude(goal__status_id=Constants.status_completed)
+    actions_three_weeks = user_actions(request).filter(created_date__gt=last_week[0],
+                                                     created_date__lt=next_week[1])
 
     this_week_start = timezone.make_aware(this_week[0], timezone.get_default_timezone())
     next_week_start = timezone.make_aware(next_week[0], timezone.get_default_timezone())
 
-    # today_start = today.date()
     today_weekday = today.weekday() + 1
-    daily = [a for a in actions_two_weeks
+    daily = [a for a in actions_three_weeks
              if str(today_weekday) in a.days and a.created_date < next_week_start and
              match_day(a, this_week_start)]
     daily.sort(key=lambda a : (a.status_id, a.days))
 
-    weekly = [a for a in actions_two_weeks
+    weekly = [a for a in actions_three_weeks
               if a.created_date < next_week_start and match_day(a, this_week_start)]
     weekly.sort(key=lambda a : (a.status_id, a.days))
 
-    next = [a for a in actions_two_weeks
+    next = [a for a in actions_three_weeks
             if a.created_date > this_week_start and match_day(a, next_week_start)]
     weekly.sort(key=lambda a : (a.status_id, a.days))
 

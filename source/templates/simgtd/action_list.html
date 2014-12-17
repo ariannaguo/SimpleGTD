@@ -5,15 +5,11 @@
 {% block loadScript %}
     <script>
 
-{#        function close_dialog () {#}
-{#            $("#overlay").fadeOut("fast");#}
-{#        }#}
-
         $(function () {
 
-{#            $("#click").on("click", function() {#}
-{#                $("#overlay").fadeIn();#}
-{#            });#}
+            // status
+            //var last_due_date = "";
+            //var last_days = "";
 
             // setup tabs
             if(!$.cookie('action_tab')) {
@@ -30,7 +26,6 @@
 
             // setup action dialog
             var action_dialog, action_form,
-                    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                     dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
                     action_id = $("#action_id"),
                     subject = $("#action"),
@@ -74,8 +69,6 @@
                 var valid = true;
                 allFields.removeClass("ui-state-error");
                 valid = valid && checkLength(subject, "action", 1, 100);
-                //valid = valid && checkRegexp(subject, /^[a-z]([0-9a-z_\s])+$/i, "Username may consist of a-z, 0-9, underscores, spaces and must begin with a letter.");
-                //valid = valid && checkRegexp(hours, emailRegex, "eg. ui@jquery.com");
                 valid = valid && (due_date.val().length == 0
                                     || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
                 if (valid) {
@@ -85,7 +78,6 @@
                             data_save,
                             function(data) {
                                 if(data.result == 'OK') {
-                                    //alert(data.message);
                                     location.reload();
                                 }
                                 else {
@@ -140,12 +132,8 @@
                 open_action_dialog(-1, "Adding a new action");
             });
 
-{#            $("#create_dialog").button().on("click", function () {#}
-{#                $("#overlay").fadeIn();#}
-{#            });#}
-
-            $(".action_list").on("dblclick", "tr", function(event) {
-                var aid = $(this).data("id");
+            function edit_action (elem) {
+                var aid = elem.data("id");
                 if(!aid) { return; }
 
                 $.get('/action/' + aid, function(data) {
@@ -182,23 +170,33 @@
                         open_action_dialog(aid, "Editing action - " + action.subject);
                     }
                 }, "json");
+            }
+
+            $(".action_list").on("dblclick", "tr", function(event) {
+                edit_action($(this));
             });
 
-            $(".action_list tbody input").on("click", function() {
-                if($(this).is(":checked")){
-                    var aid = $(this).closest("tr").data("id");
-                    $.post('/action/status/' + aid,
-                            { csrfmiddlewaretoken: "{{ csrf_token }}", sid: 3 },
-                            function(data) {
-                                if(data.result == 'OK') {
-                                    location.reload();
-                                }
-                                else {
-                                    alert(data.message);
-                                }
-                            }, "json"
-                    );
+            $(".action_list tr .clickable").click(function() {
+                edit_action($(this).parent());
+            });
+
+            $(".action_list tbody input[type='checkbox']").on("click", function() {
+                var sid = 3;
+                if(!$(this).is(":checked")){
+                    sid = 1;
                 }
+                var aid = $(this).closest("tr").data("id");
+                $.post('/action/status/' + aid,
+                    { csrfmiddlewaretoken: "{{ csrf_token }}", sid: sid },
+                    function(data) {
+                        if(data.result == 'OK') {
+                            location.reload();
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    }, "json"
+                );
             });
 
             $(".action_list").tooltip({
@@ -219,50 +217,8 @@
             $("tr[class='done'] input[type='checkbox']").each(function() {
                 var box = $(this);
                 box.prop("checked", true);
-                box.prop("disabled", true);
+                //box.prop("disabled", true);
             });
-
-            // comment dialog
-{#            var comment_action_id = $("#comment_action_id");#}
-{##}
-{#            function add_comment () {#}
-{#                alert('add comment');#}
-{#            }#}
-{##}
-{#            var note_dialog = $("#note_dialog").dialog({#}
-{#                autoOpen: false,#}
-{#                height: 'auto',#}
-{#                width: 'auto',#}
-{#                modal: true,#}
-{#                buttons: {#}
-{#                    "OK": add_comment,#}
-{#                    Cancel: function () {#}
-{#                        note_dialog.dialog("close");#}
-{#                    }#}
-{#                },#}
-{#                close: function () {#}
-{#                    comment_form[0].reset();#}
-{#                    //allFields.removeClass("ui-state-error");#}
-{#                }#}
-{#            });#}
-{##}
-{#            var comment_form = action_dialog.find("#comment_form").on("submit", function (event) {#}
-{#                event.preventDefault();#}
-{#                add_comment();#}
-{#            });#}
-{##}
-{#            function open_comment_dialog(aid, title) {#}
-{#                note_dialog.dialog("open");#}
-{#                comment_action_id.val(aid);#}
-{#                note_dialog.dialog("option", "title", title);#}
-{#            }#}
-{##}
-{#            $(".action_list img").on("click", function() {#}
-{#                var aid = $(this).data("id");#}
-{#                if(!aid) { return; }#}
-{##}
-{#                open_comment_dialog(-1, "Adding a new note for - " + aid);#}
-{#            });#}
         });
     </script>
 {% endblock %}
@@ -344,21 +300,6 @@
         </form>
     </div>
 
-{#    <div id="note_dialog" title="Add a note">#}
-{#        <p class="validateTips"></p>#}
-{#        <form id="note_dialog">#}
-{#            <div id="add_action_comment">#}
-{#                <div class="field">#}
-{#                    <input type="hidden" id="comment_action_id" name="comment_action_id" class="field_label_input" value="-1">#}
-{#                </div>#}
-{#                <div class="field">#}
-{#                    <label class="field_label" for="comment">Comment *</label>#}
-{#                    <input type="text" id="comment" name="comment" class="field_label_input">#}
-{#                </div>#}
-{#            </div>#}
-{#        </form>#}
-{#    </div>#}
-
     <button id="create_action" class="button add">+ ADD ACTION</button>
 
     <div id="actions">
@@ -370,7 +311,6 @@
                 <li><a href="#next_week">Next week</a></li>
             </ul>
             <div id="daily">
-{#                <div id="click">Click Me</div>#}
                 {% if daily %}
                     <table class="action_list">
                         <thead>
@@ -434,7 +374,7 @@
                         {% for action in weekly %}
                             <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
                                 <td><input type="checkbox" name="complete"></td>
-                                <td>{{ action.subject }}</td>
+                                <td class="clickable">{{ action.subject }}</td>
                                 <td width="5%">{{ action.days }}</td>
                                 <td>
                                     {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
@@ -512,87 +452,6 @@
                 {% endif %}
             </div>
         </div>
-
-{#        <div id="overlay" class="ui-overlay" style="display: none">#}
-{#            <div class="ui-widget-overlay"></div>#}
-{#            <div style="width: 352px; height: 252px; position: absolute; left: 50px; top: 30px;" class="ui-widget-shadow ui-corner-all"></div>#}
-{#            <div class="ui-widget ui-widget-content ui-corner-all" style="position: absolute; width: 330px; height: 230px;left: 50px; top: 30px; padding: 10px;">#}
-{#                <span>Create a new action</span>#}
-{#                <span class="gact rr"><a onclick="close_dialog()" href="javascript:;" style="float: right">x</a></span>#}
-{##}
-{#                <form id="action_form2">#}
-{#                    <div id="add_action_setting">#}
-{#                        <div class="field">#}
-{#                            <input type="hidden" id="action_id" name="action_id" class="field_label_input" value="-1">#}
-{#                        </div>#}
-{#                        <div class="field">#}
-{#                            <label class="field_label" for="action">Action <em class="required">*</em></label>#}
-{#                            <input type="text" id="action" name="action" class="field_label_input">#}
-{#                        </div>#}
-{#                        <div class="field">#}
-{#                            <label class="field_label">Time needed</label>#}
-{#                            <input type="number" id="hours" name="hours" class="field_label_input time_input">#}
-{#                            <label for="hours">h</label>#}
-{##}
-{#                            <input type="number" id="minutes" name="minutes" class="field_label_input time_input">#}
-{#                            <label for="minutes">m</label>#}
-{#                        </div>#}
-{#                        <div class="field">#}
-{#                            <label class="field_label" for="due_date">Due Date</label>#}
-{#                            <input type="text" id="due_date" name="due_date" class="field_label_input">#}
-{#                        </div>#}
-{#                        <div class="field">#}
-{#                            <label class="field_label" for="tags">Tags</label>#}
-{#                            <input type="text" id="tags" name="tags" class="field_label_input">#}
-{#                        </div>#}
-{#                        <div>#}
-{#                            <div class="field check" id="week">#}
-{#                                <label for="check_week" class="check">#}
-{#                                    <input type="radio" name="check_week" class="check_week" value="0" checked>This week#}
-{#                                </label>#}
-{#                                <label for="check_week" class="check">#}
-{#                                    <input type="radio" name="check_week" class="check_week" value="1">Next week#}
-{#                                </label>#}
-{#                            </div>#}
-{#                            <div class="field" id="days">#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="1">Mon#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="2">Tue#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="3">Wed#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="4">Thu#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="5">Fri#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="6">Sat#}
-{#                                </label>#}
-{#                                <label for="check_day" class="check">#}
-{#                                    <input type="checkbox" name="check_day" class="check_day" value="7">Sun#}
-{#                                </label>#}
-{#                            </div>#}
-{##}
-{#                        </div>#}
-{##}
-{#                        <div>#}
-{#                            <label for="goal"></label>#}
-{#                            <select id="goal" name="goal">#}
-{#                                <option value="" selected="selected">---select a goal---</option>#}
-{#                                {% for goal in goals %}#}
-{#                                    <option value="{{ goal.id }}">{{ goal.subject }}</option>#}
-{#                                {% endfor %}#}
-{#                            </select>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </form>#}
-{#	        </div>#}
-{#        </div>#}
 
     </div>
 

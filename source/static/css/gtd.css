@@ -4,10 +4,10 @@ body{
     font-family:Calibri, Arial, Helvetica, sans-serif;
 }
 
-/*#wrapper {*/
-    /*width: 920px;*/
-    /*margin: 0 auto;*/
-/*}*/
+/* clickable */
+.clickable {
+    cursor: pointer;
+}
 
 /*login signup header*/
 #authHeader {
@@ -47,15 +47,6 @@ body{
     color:rgba(0,0,0,0.6);
 }
 
-/*.header-secondary input[type="submit"] {*/
-    /*height: 28px;*/
-    /*line-height: 100px;*/
-    /*margin: 0;*/
-    /*padding: 0;*/
-    /*width: 30px;*/
-    /*background: url("/static/images/bn_search.png") no-repeat scroll 95% 90% transparent;*/
-/*}*/
-
 #header .sep {
     margin: 0 -2px 0 2px;
     color:#717171;
@@ -82,7 +73,6 @@ body{
     margin: 150px auto;
     border-radius:10px;
 }
-
 
 label[for=login_email],
 label[for=login_password],
@@ -146,7 +136,6 @@ label {
 }
 
 /* gtd */
-
 div#navigation{
     margin:20px 85% 5px 5px;
     padding:5px 5px 5px 5px;
@@ -177,13 +166,6 @@ a.menu{
     text-decoration: none;
 }
 
-
-/*a.menu:hover{*/
-    /*text-decoration: underline;*/
-    /*color: white;*/
-/*}*/
-
-
 div#content{
     position: absolute;
     top: 50px;
@@ -207,6 +189,7 @@ p#goal_number{
     color:rgba(0, 0, 0, 0.5) ;
     font-weight: 600;
 }
+
 a.add{
     position: absolute;
     top:0px;
@@ -287,7 +270,6 @@ td a{
 /*add_goal*/
 #add_goal_setting{
     width:60%;
-    /*position: relative;*/
     top:50px;
     margin: 15px 1%;
 }
@@ -373,10 +355,6 @@ label.check{
 .action_list tbody tr:nth-child(odd) {
     background-color: #edf5ff;
 }
-
-/*.action_list tbody tr:nth-child(even) {*/
-    /*background-color: #A4D1FF;*/
-/*}*/
 
 .action_list tbody tr:hover {
     background-color: #65a3df;
