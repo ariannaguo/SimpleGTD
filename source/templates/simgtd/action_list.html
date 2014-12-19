@@ -211,7 +211,10 @@
 
             due_date.datepicker({
                 showOtherMonths: true,
-                selectOtherMonths: true
+                selectOtherMonths: true,
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true
             });
 
             $("tr[class='done'] input[type='checkbox']").each(function() {
