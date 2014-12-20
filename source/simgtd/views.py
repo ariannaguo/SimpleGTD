@@ -22,7 +22,8 @@ from common import dt
 @login_required
 def email(request):
     says = ['Do what you like and like what you are doing.', datetime.now(), 'Greeting']
-    send_mail(says[0], 'message here', 'SimpleGTD <' + settings.EMAIL_ADMIN + '>', ['anderscui@gmail.com'], fail_silently=False)
+    send_mail(says[0], 'message here', 'SimpleGTD <' + settings.EMAIL_ADMIN + '>', ['anderscui@gmail.com'],
+              fail_silently=False)
     return render_to_response('simgtd/says.html', RequestContext(request, {'says': says}))
 
 
@@ -95,8 +96,8 @@ def edit_goal(request, gid):
 
 @login_required
 def goals(request):
-    all_goals = user_goals(request).filter(created_by_id=user_id(request))\
-                                   .order_by('status_id', '-start_date')
+    all_goals = user_goals(request).filter(created_by_id=user_id(request)) \
+        .order_by('status_id', '-start_date')
 
     return render_to_response('simgtd/goal_list.html',
                               RequestContext(request, {'goals': all_goals}))
@@ -105,7 +106,6 @@ def goals(request):
 @login_required
 @require_http_methods(['POST'])
 def goal_status(request, gid):
-
     gid = int(gid)
     sid = int(request.POST['sid'])
 
@@ -155,7 +155,7 @@ def action_list(request):
     next_week = dt.week_range(today, 1)
 
     actions_three_weeks = user_actions(request).filter(created_date__gt=last_week[0],
-                                                     created_date__lt=next_week[1])
+                                                       created_date__lt=next_week[1])
 
     this_week_start = timezone.make_aware(this_week[0], timezone.get_default_timezone())
     next_week_start = timezone.make_aware(next_week[0], timezone.get_default_timezone())
@@ -164,15 +164,15 @@ def action_list(request):
     daily = [a for a in actions_three_weeks
              if str(today_weekday) in a.days and a.created_date < next_week_start and
              match_day(a, this_week_start)]
-    daily.sort(key=lambda a : (a.status_id, a.days))
+    daily.sort(key=lambda a: (a.status_id, a.days))
 
     weekly = [a for a in actions_three_weeks
               if a.created_date < next_week_start and match_day(a, this_week_start)]
-    weekly.sort(key=lambda a : (a.status_id, a.days))
+    weekly.sort(key=lambda a: (a.status_id, a.days))
 
     next = [a for a in actions_three_weeks
             if a.created_date > this_week_start and match_day(a, next_week_start)]
-    weekly.sort(key=lambda a : (a.status_id, a.days))
+    weekly.sort(key=lambda a: (a.status_id, a.days))
 
     all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
     return render_to_response('simgtd/action_list.html',
@@ -183,7 +183,6 @@ def action_list(request):
 @login_required
 @require_http_methods(['POST'])
 def action_update(request):
-
     aid = request.POST['action_id']
     subject = request.POST['action']
     hours = request.POST['hours']
@@ -242,7 +241,17 @@ def action_update(request):
                     action.tags.add(tag)
             action.save()
 
-            resp_data = {"aid": action.id, 'result': 'OK', 'message': 'you got it!'}
+            updated = {"id": action.id,
+                       "status": action.status_id,
+                       "subject": action.subject,
+                       "days": action.days,
+                       "time": action.time(),
+                       # "due_date": action.due_date,
+                       }
+            if action.goal:
+                updated["goal"] = action.goal.subject
+
+            resp_data = {"aid": action.id, "action": updated, 'result': 'OK', 'message': 'you got it!'}
 
         except Exception as e:
             print(e.message)
@@ -261,9 +270,11 @@ def action_get(request, aid):
     res = {}
     if action:
         # serializers are only used for django models.
-        #resp_data = serializers.serialize('json', {'action': action, 'tags': ts})
+        # resp_data = serializers.serialize('json', {'action': action, 'tags': ts})
         res['action'] = model_to_dict(action, exclude='tags')
         res['tags'] = action.tag_list()
+        if action.goal:
+            res["goal"] = action.goal.subject
     else:
         res = {"aid": 0, 'result': 'ERROR', 'message': 'Action not found'}
 
@@ -293,7 +304,6 @@ def action_comments(request, aid):
 
 @login_required
 def add_action_comment(request, aid):
-
     comment = request.POST['comment']
     if comment:
         ac = ActionComment(comment=comment, action_id=aid)
@@ -305,9 +315,9 @@ def add_action_comment(request, aid):
 # @login_required
 # def add_goal_comment(request, gid):
 #
-#     comment = request.POST['comment']
-#     if comment:
-#         gc = GoalComment(comment=comment, goal_id=gid)
+# comment = request.POST['comment']
+# if comment:
+# gc = GoalComment(comment=comment, goal_id=gid)
 #         gc.save()
 #
 #     return HttpResponseRedirect('/goal/list/')
@@ -316,7 +326,6 @@ def add_action_comment(request, aid):
 @login_required
 @require_http_methods(['POST'])
 def action_status(request, aid):
-
     aid = int(aid)
     sid = int(request.POST['sid'])
     if sid in [1, 2, 3] and aid > 0:
