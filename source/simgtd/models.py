@@ -90,7 +90,7 @@ class Action(models.Model):
         if self.hours > 0:
             ts = ts + str(self.hours) + ' hours'
         if self.minutes > 0:
-            ts = ts + str(self.minutes) + ' minutes'
+            ts = ts + " " + str(self.minutes) + ' minutes'
 
         return ts
 

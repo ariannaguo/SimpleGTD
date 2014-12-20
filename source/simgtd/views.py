@@ -246,7 +246,7 @@ def action_update(request):
                        "subject": action.subject,
                        "days": action.days,
                        "time": action.time(),
-                       # "due_date": action.due_date,
+                       "due_date": action.due_date.strftime("%b. %d (%a)")
                        }
             if action.goal:
                 updated["goal"] = action.goal.subject

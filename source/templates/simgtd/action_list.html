@@ -5,6 +5,8 @@
 {% block loadScript %}
     <script>
 
+        var status_completed = "3";
+
         $(function () {
 
             // status
@@ -71,13 +73,6 @@
             Mustache.tags = ['[[', ']]'];
             var template = $("#action_template").html();
             Mustache.parse(template);
-{#            var a = {#}
-{#                action: {#}
-{#                    id: 100#}
-{#                }#}
-{#            };#}
-{#            var rendered = Mustache.render(template, a);#}
-{#            alert(rendered);#}
 
             function updateAction() {
                 var valid = true;
@@ -93,42 +88,61 @@
                             data_save,
                             function(data) {
                                 if(data.result == 'OK') {
+
+                                    if (status_completed == data.action.status) {
+                                        data.action.done = "done";
+                                        data.action.checked = "checked";
+                                    }
+                                    if (!data.action.time) {
+                                        data.action.time = "NOT SET";
+                                    }
+
                                     var new_row = Mustache.render(template, data);
-                                    //alert(new_row);
 
                                     var table = $(".action_list").eq(tabIndex());
+
+                                    function add_row (tbl) {
+                                        var days_index = 2;
+                                        var rows = tbl.find("tbody tr");
+                                        var new_status = data.action.status;
+                                        var new_days = data.action.days;
+                                        var new_index = -1;
+                                        for(var idx = 0; idx < rows.length; idx++) {
+                                            row = $(rows[idx]);
+                                            var sid = row.data("sid");
+                                            var days = row.find("td").eq(days_index).text();
+
+                                            if(new_status < sid
+                                               || (new_status == sid && new_days <= days)) {
+                                                new_index = idx;
+                                                break;
+                                            }
+                                        }
+
+                                        if (new_index < 0) {
+                                            new_index = rows.length;
+                                            rows.filter(":last").after(new_row);
+                                        }
+                                        else {
+                                            var before = rows.eq(new_index);
+                                            before.before(new_row);
+                                        }
+
+                                        //var added_row = table.find("tbody tr:eq(" + new_index + ")");
+                                        //alert(added_row.html());
+                                    }
 
                                     var aid = parseInt(action_id.val());
                                     if(aid > 0) {
                                         var r = table.find("tbody tr[data-id='" + aid + "']");
-                                        r.hide(1000, function () {
-                                            var days_index = 2;
-                                            var rows = table.find("tbody tr");
-                                            var new_status = data.action.status;
-                                            var new_days = data.action.days;
-                                            var new_index = -1;
-                                            for(var idx = 0; idx < rows.length; idx++) {
-                                                row = $(rows[idx]);
-                                                var sid = row.data("sid");
-                                                var days = row.find("td").eq(days_index).text();
 
-                                                if(new_status < sid
-                                                   || (new_status == sid && new_days <= days)) {
-                                                    new_index = idx;
-                                                    break;
-                                                }
-                                            }
-
-                                            if (new_index < 0) {
-                                                new_index = rows.length;
-                                                rows.filter(":last").after(new_row);
-                                            }
-                                            else {
-                                                var before = rows.eq(new_index);
-                                                before.before(new_row);
-                                            }
-                                            //location.reload();
+                                        r.hide(500, function () {
+                                            r.remove();
+                                            add_row(table);
                                         });
+                                    }
+                                    else{
+                                        add_row(table);
                                     }
                                 }
                                 else {
@@ -227,11 +241,11 @@
                 edit_action($(this));
             });
 
-            $(".action_list tr .clickable").click(function() {
+            $(".action_list").on("click", "tr .clickable", function(event) {
                 edit_action($(this).parent());
             });
 
-            $(".action_list tbody input[type='checkbox']").on("click", function() {
+            $(".action_list").on("click", "input[type='checkbox']", function() {
                 var sid = 3;
                 if(!$(this).is(":checked")){
                     sid = 1;
@@ -273,49 +287,6 @@
                 box.prop("checked", true);
                 //box.prop("disabled", true);
             });
-
-            $(".click").click(function () {
-                var table = $(".action_list").eq(tabIndex());
-
-                var days_index = 2;
-                var rows = table.find("tbody tr");
-
-                var new_row = "<tr data-id='101'>"
-                                + "<td><input type='checkbox' name='complete'></td>"
-                                + "<td class='clickable'>douban</td>"
-                                + "<td>4</td>"
-                                + "<td>5 hours</td>"
-                                + "<td>Dec. 15 (Mon)</td>"
-                                + "<td></td>"
-                                + "<td></td>"
-                                + "</tr>";
-
-                var new_status = "3";
-                var new_days = "2";
-                var new_index = -1;
-                for(var idx = 0; idx < rows.length; idx++) {
-                    row = $(rows[idx]);
-                    var sid = row.data("sid");
-                    var days = row.find("td").eq(days_index).text();
-
-                    console.log(sid + "," + days);
-                    if(new_status < sid
-                       || (new_status == sid && new_days <= days)) {
-                        new_index = idx;
-                        break;
-                    }
-                }
-                if (new_index < 0) {
-                    new_index = rows.length;
-                    rows.filter(":last").after(new_row);
-                }
-                else {
-                    var before = rows.eq(new_index);
-                    before.before(new_row);
-                }
-
-                console.log(new_index);
-            })
         });
     </script>
 {% endblock %}
@@ -324,7 +295,7 @@
 
     <script id="action_template" type="x-tmpl-mustache">
     <tr data-id="[[ action.id ]]" class="[[ action.done ]]">
-        <td><input type="checkbox" name="complete"></td>
+        <td><input type="checkbox" name="complete" [[ action.checked ]]></td>
         <td class="clickable">[[ action.subject ]]</td>
         <td width="5%">[[ action.days ]]</td>
         <td>
@@ -426,7 +397,6 @@
                 <li><a href="#next_week">Next week</a></li>
             </ul>
             <div id="daily">
-                <div class="click">Click Me</div>
                 <table class="action_list">
                     <thead>
                     <tr>
@@ -470,7 +440,6 @@
                 </table>
             </div>
             <div id="weekly">
-                <div class="click">Click Me</div>
                 <table class="action_list">
                     <thead>
                     <tr data-id="{{ action.id }}">
