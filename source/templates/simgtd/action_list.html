@@ -12,13 +12,15 @@
             //var last_days = "";
 
             // setup tabs
-            if(!$.cookie('action_tab')) {
-                $.cookie('action_tab', 1);
+            function tabIndex () {
+                if(!$.cookie('action_tab')) {
+                    $.cookie('action_tab', 1);
+                }
+                return parseInt($.cookie('action_tab'));
             }
 
-            var action_tab = parseInt($.cookie('action_tab'));
             $("#tabs").tabs({
-                active: action_tab,
+                active: tabIndex(),
                 activate: function(event, ui) {
                     $.cookie('action_tab', ui.newTab.index());
                 }
@@ -65,6 +67,18 @@
                 }
             }
 
+
+            Mustache.tags = ['[[', ']]'];
+            var template = $("#action_template").html();
+            Mustache.parse(template);
+{#            var a = {#}
+{#                action: {#}
+{#                    id: 100#}
+{#                }#}
+{#            };#}
+{#            var rendered = Mustache.render(template, a);#}
+{#            alert(rendered);#}
+
             function updateAction() {
                 var valid = true;
                 allFields.removeClass("ui-state-error");
@@ -74,11 +88,48 @@
                 if (valid) {
                     var data_save = action_form.serializeArray();
                     data_save.push({ name: 'csrfmiddlewaretoken', value: '{{ csrf_token }}'});
+
                     $.post('/action/update/',
                             data_save,
                             function(data) {
                                 if(data.result == 'OK') {
-                                    location.reload();
+                                    var new_row = Mustache.render(template, data);
+                                    //alert(new_row);
+
+                                    var table = $(".action_list").eq(tabIndex());
+
+                                    var aid = parseInt(action_id.val());
+                                    if(aid > 0) {
+                                        var r = table.find("tbody tr[data-id='" + aid + "']");
+                                        r.hide(1000, function () {
+                                            var days_index = 2;
+                                            var rows = table.find("tbody tr");
+                                            var new_status = data.action.status;
+                                            var new_days = data.action.days;
+                                            var new_index = -1;
+                                            for(var idx = 0; idx < rows.length; idx++) {
+                                                row = $(rows[idx]);
+                                                var sid = row.data("sid");
+                                                var days = row.find("td").eq(days_index).text();
+
+                                                if(new_status < sid
+                                                   || (new_status == sid && new_days <= days)) {
+                                                    new_index = idx;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (new_index < 0) {
+                                                new_index = rows.length;
+                                                rows.filter(":last").after(new_row);
+                                            }
+                                            else {
+                                                var before = rows.eq(new_index);
+                                                before.before(new_row);
+                                            }
+                                            //location.reload();
+                                        });
+                                    }
                                 }
                                 else {
                                     alert(data.message);
@@ -222,11 +273,72 @@
                 box.prop("checked", true);
                 //box.prop("disabled", true);
             });
+
+            $(".click").click(function () {
+                var table = $(".action_list").eq(tabIndex());
+
+                var days_index = 2;
+                var rows = table.find("tbody tr");
+
+                var new_row = "<tr data-id='101'>"
+                                + "<td><input type='checkbox' name='complete'></td>"
+                                + "<td class='clickable'>douban</td>"
+                                + "<td>4</td>"
+                                + "<td>5 hours</td>"
+                                + "<td>Dec. 15 (Mon)</td>"
+                                + "<td></td>"
+                                + "<td></td>"
+                                + "</tr>";
+
+                var new_status = "3";
+                var new_days = "2";
+                var new_index = -1;
+                for(var idx = 0; idx < rows.length; idx++) {
+                    row = $(rows[idx]);
+                    var sid = row.data("sid");
+                    var days = row.find("td").eq(days_index).text();
+
+                    console.log(sid + "," + days);
+                    if(new_status < sid
+                       || (new_status == sid && new_days <= days)) {
+                        new_index = idx;
+                        break;
+                    }
+                }
+                if (new_index < 0) {
+                    new_index = rows.length;
+                    rows.filter(":last").after(new_row);
+                }
+                else {
+                    var before = rows.eq(new_index);
+                    before.before(new_row);
+                }
+
+                console.log(new_index);
+            })
         });
     </script>
 {% endblock %}
 
 {% block content %}
+
+    <script id="action_template" type="x-tmpl-mustache">
+    <tr data-id="[[ action.id ]]" class="[[ action.done ]]">
+        <td><input type="checkbox" name="complete"></td>
+        <td class="clickable">[[ action.subject ]]</td>
+        <td width="5%">[[ action.days ]]</td>
+        <td>
+            [[ action.time ]]
+        </td>
+        <td>[[ action.due_date ]]</td>
+        <td>[[ action.goal ]]</td>
+        <td width="5%">
+            <a href="{% url "site_root" %}action/[[ action.id ]]/comments/">
+                <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+            </a>
+        </td>
+    </tr>
+    </script>
 
     <div id="action_dialog" title="Create new action">
         <p class="validateTips"></p>
@@ -314,145 +426,139 @@
                 <li><a href="#next_week">Next week</a></li>
             </ul>
             <div id="daily">
-                {% if daily %}
-                    <table class="action_list">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Action</th>
-                            <th>Days</th>
-                            <th>Time Needed</th>
-                            <th>Due Date</th>
-                            <th>Goal</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for action in daily %}
-                            <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
-                                <td><input type="checkbox" name="complete"></td>
-                                <td>{{ action.subject }}</td>
-                                <td width="5%">{{ action.days }}</td>
-                                <td>
-                                    {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
-                                </td>
-                                <td>{{ action.due_date|date:"N j (D)" }}</td>
-                                <td>
-                                    {% if action.goal %}{{ action.goal }}{% endif %}
-                                </td>
-                                <td width="5%">
-                                    <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
-                                        <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
-                                    </a>
+                <div class="click">Click Me</div>
+                <table class="action_list">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Action</th>
+                        <th>Days</th>
+                        <th>Time Needed</th>
+                        <th>Due Date</th>
+                        <th>Goal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for action in daily %}
+                        <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                            <td><input type="checkbox" name="complete"></td>
+                            <td class="clickable">{{ action.subject }}</td>
+                            <td width="5%">{{ action.days }}</td>
+                            <td>
+                                {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+                            </td>
+                            <td>{{ action.due_date|date:"N j (D)" }}</td>
+                            <td>{% if action.goal %}{{ action.goal }}{% endif %}</td>
+                            <td width="5%">
+                                <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                                    <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+                                </a>
 
-                                    {% if action.comments.all %}
-                                        <div class="notes">
-                                        <ul>
-                                            {% for c in action.comments.all %}
-                                                <li>{{ c.comment }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
+                                {% if action.comments.all %}
+                                    <div class="notes">
+                                    <ul>
+                                        {% for c in action.comments.all %}
+                                            <li>{{ c.comment }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div id="weekly">
-                {% if weekly %}
-                    <table class="action_list">
-                        <thead>
-                        <tr data-id="{{ action.id }}">
-                            <th></th>
-                            <th>Action</th>
-                            <th>Days</th>
-                            <th>Time Needed</th>
-                            <th>Due Date</th>
-                            <th>Goal</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for action in weekly %}
-                            <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
-                                <td><input type="checkbox" name="complete"></td>
-                                <td class="clickable">{{ action.subject }}</td>
-                                <td width="5%">{{ action.days }}</td>
-                                <td>
-                                    {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
-                                </td>
-                                <td>{{ action.due_date|date:"N j (D)" }}</td>
-                                <td>
-                                    {% if action.goal %}{{ action.goal }}{% endif %}
-                                </td>
-                                <td width="5%">
-                                    <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
-                                        <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
-                                    </a>
+                <div class="click">Click Me</div>
+                <table class="action_list">
+                    <thead>
+                    <tr data-id="{{ action.id }}">
+                        <th></th>
+                        <th>Action</th>
+                        <th>Days</th>
+                        <th>Time Needed</th>
+                        <th>Due Date</th>
+                        <th>Goal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for action in weekly %}
+                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                            <td><input type="checkbox" name="complete"></td>
+                            <td class="clickable">{{ action.subject }}</td>
+                            <td width="5%">{{ action.days }}</td>
+                            <td>
+                                {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+                            </td>
+                            <td>{{ action.due_date|date:"N j (D)" }}</td>
+                            <td>
+                                {% if action.goal %}{{ action.goal }}{% endif %}
+                            </td>
+                            <td width="5%">
+                                <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                                    <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+                                </a>
 
-                                    {% if action.comments.all %}
-                                        <div class="notes">
-                                        <ul>
-                                            {% for c in action.comments.all %}
-                                                <li>{{ c.comment }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
+                                {% if action.comments.all %}
+                                    <div class="notes">
+                                    <ul>
+                                        {% for c in action.comments.all %}
+                                            <li>{{ c.comment }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div id="next_week">
-                {% if next_week %}
-                    <table class="action_list">
-                        <thead>
-                        <tr>
-                            <th></th>
-                            <th>Action</th>
-                            <th>Days</th>
-                            <th>Time Needed</th>
-                            <th>Due Date</th>
-                            <th>Goal</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for action in next_week %}
-                            <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
-                                <td><input type="checkbox" name="complete"></td>
-                                <td>{{ action.subject }}</td>
-                                <td width="5%">{{ action.days }}</td>
-                                <td>
-                                    {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
-                                </td>
-                                <td>{{ action.due_date|date:"N j (D)" }}</td>
-                                <td>
-                                    {% if action.goal %}{{ action.goal }}{% endif %}
-                                </td>
-                                <td width="5%">
-                                    <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
-                                        <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
-                                    </a>
+                <table class="action_list">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Action</th>
+                        <th>Days</th>
+                        <th>Time Needed</th>
+                        <th>Due Date</th>
+                        <th>Goal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for action in next_week %}
+                        <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                            <td><input type="checkbox" name="complete"></td>
+                            <td class="clickable">{{ action.subject }}</td>
+                            <td width="5%">{{ action.days }}</td>
+                            <td>
+                                {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+                            </td>
+                            <td>{{ action.due_date|date:"N j (D)" }}</td>
+                            <td>
+                                {% if action.goal %}{{ action.goal }}{% endif %}
+                            </td>
+                            <td width="5%">
+                                <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                                    <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
+                                </a>
 
-                                    {% if action.comments.all %}
-                                        <div class="notes">
-                                        <ul>
-                                            {% for c in action.comments.all %}
-                                                <li>{{ c.comment }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                        </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
+                                {% if action.comments.all %}
+                                    <div class="notes">
+                                    <ul>
+                                        {% for c in action.comments.all %}
+                                            <li>{{ c.comment }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
