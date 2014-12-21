@@ -352,6 +352,12 @@ label.check{
     border-collapse: collapse;
     text-align: center;
 }
+.action_list tr{
+    font-size: 14pt;
+}
+.action_list tbody{
+    font-size: 12pt;
+}
 .checkbox{
     width: 36px;
 }

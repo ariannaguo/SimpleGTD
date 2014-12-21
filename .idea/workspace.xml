@@ -36,8 +36,8 @@
       <file leaf-file-name="gtd.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/source/static/css/gtd.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.24623115" vertical-offset="5182" max-vertical-offset="6525">
-              <caret line="352" column="22" selection-start-line="352" selection-start-column="22" selection-end-line="352" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.69849247" vertical-offset="5047" max-vertical-offset="6615">
+              <caret line="355" column="20" selection-start-line="355" selection-start-column="20" selection-end-line="355" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -56,7 +56,7 @@
       <file leaf-file-name="action_list.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/templates/simgtd/action_list.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-18.791666" vertical-offset="5804" max-vertical-offset="8085">
+            <state vertical-scroll-proportion="-20.666666" vertical-offset="5759" max-vertical-offset="8085">
               <caret line="417" column="43" selection-start-line="417" selection-start-column="43" selection-end-line="417" selection-end-column="43" />
               <folding />
             </state>
@@ -704,7 +704,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/source/templates/simgtd/action_list.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-18.791666" vertical-offset="5804" max-vertical-offset="8085">
+        <state vertical-scroll-proportion="-20.666666" vertical-offset="5759" max-vertical-offset="8085">
           <caret line="417" column="43" selection-start-line="417" selection-start-column="43" selection-end-line="417" selection-end-column="43" />
           <folding />
         </state>
@@ -712,8 +712,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/source/static/css/gtd.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24623115" vertical-offset="5182" max-vertical-offset="6525">
-          <caret line="352" column="22" selection-start-line="352" selection-start-column="22" selection-end-line="352" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.69849247" vertical-offset="5047" max-vertical-offset="6615">
+          <caret line="355" column="20" selection-start-line="355" selection-start-column="20" selection-end-line="355" selection-end-column="20" />
           <folding />
         </state>
       </provider>
