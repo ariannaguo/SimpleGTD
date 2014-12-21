@@ -130,9 +130,10 @@ def goal_status(request, gid):
     return HttpResponse(json.dumps(resp_data), content_type="application/json")
 
 
-def match_day(action, point):
-    return (action.created_date < point and action.week_offset == 1) \
-           or (action.created_date > point and action.week_offset == 0)
+def match_day(action, week):
+    week_start = timezone.make_aware(week[0], timezone.get_default_timezone())
+    week_end = timezone.make_aware(week[1], timezone.get_default_timezone())
+    return week_start <= action.start_date <= week_end
 
 
 def user_id(request):
@@ -154,24 +155,24 @@ def action_list(request):
     this_week = dt.week_range(today, 0)
     next_week = dt.week_range(today, 1)
 
-    actions_three_weeks = user_actions(request).filter(created_date__gt=last_week[0],
-                                                       created_date__lt=next_week[1])
+    actions_three_weeks = user_actions(request).filter(start_date__gt=last_week[0],
+                                                       start_date__lt=next_week[1])
 
     this_week_start = timezone.make_aware(this_week[0], timezone.get_default_timezone())
     next_week_start = timezone.make_aware(next_week[0], timezone.get_default_timezone())
 
     today_weekday = today.weekday() + 1
     daily = [a for a in actions_three_weeks
-             if str(today_weekday) in a.days and a.created_date < next_week_start and
-             match_day(a, this_week_start)]
+             if str(today_weekday) in a.days and a.start_date < next_week_start and
+             match_day(a, this_week)]
     daily.sort(key=lambda a: (a.status_id, a.days))
 
     weekly = [a for a in actions_three_weeks
-              if a.created_date < next_week_start and match_day(a, this_week_start)]
+              if a.start_date < next_week_start and match_day(a, this_week)]
     weekly.sort(key=lambda a: (a.status_id, a.days))
 
     next = [a for a in actions_three_weeks
-            if a.created_date > this_week_start and match_day(a, next_week_start)]
+            if a.start_date > this_week_start and match_day(a, next_week)]
     weekly.sort(key=lambda a: (a.status_id, a.days))
 
     all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
@@ -231,6 +232,9 @@ def action_update(request):
             if is_new:
                 action.created_date = datetime.now()
                 action.created_by = request.user
+                action.start_date = datetime.now() + timedelta(weeks=check_week)
+            else:
+                action.start_date = action.start_date + timedelta(weeks=check_week)
 
             action.save()
 

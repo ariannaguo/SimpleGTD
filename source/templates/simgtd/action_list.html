@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Actions{% endblock %}
+{% block myScript %}
+    <script src="{{ STATIC_URL }}scripts/gtd.js"></script>
+{% endblock %}
 
 {% block loadScript %}
     <script>
@@ -210,10 +213,16 @@
 
                         tags.val(data.tags.join(", "));
 
-                        var week = action.week_offset;
-                        if(week !== null) {
-                            $("#week").find("[value=" + week + "]").prop("checked", true);
+                        var week = 0;
+                        if(action.start_date) {
+                            var start_date = new Date(action.start_date.slice(0, -1));
+                            var this_week = gtd.week_range(new Date());
+                            if(start_date > this_week.end){
+                                week = 1;
+                            }
                         }
+                        $("#week").find("[value=" + week + "]").prop("checked", true);
+
                         var days = action.days;
                         if(days !== null) {
                             $(".check_day").each(function(index) {
