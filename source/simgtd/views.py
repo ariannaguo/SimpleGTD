@@ -19,6 +19,10 @@ from simgtd.models import Goal, Action, Constants, ActionComment, GoalComment
 from common import dt
 
 
+def make_tz_aware(d):
+    return timezone.make_aware(d, timezone.get_default_timezone())
+
+
 @login_required
 def email(request):
     says = ['Do what you like and like what you are doing.', datetime.now(), 'Greeting']
@@ -131,8 +135,8 @@ def goal_status(request, gid):
 
 
 def match_day(action, week):
-    week_start = timezone.make_aware(week[0], timezone.get_default_timezone())
-    week_end = timezone.make_aware(week[1], timezone.get_default_timezone())
+    week_start = make_tz_aware(week[0])
+    week_end = make_tz_aware(week[1])
     return week_start <= action.start_date <= week_end
 
 
@@ -158,8 +162,8 @@ def action_list(request):
     actions_three_weeks = user_actions(request).filter(start_date__gt=last_week[0],
                                                        start_date__lt=next_week[1])
 
-    this_week_start = timezone.make_aware(this_week[0], timezone.get_default_timezone())
-    next_week_start = timezone.make_aware(next_week[0], timezone.get_default_timezone())
+    this_week_start = make_tz_aware(this_week[0])
+    next_week_start = make_tz_aware(next_week[0])
 
     today_weekday = today.weekday() + 1
     daily = [a for a in actions_three_weeks
@@ -229,12 +233,17 @@ def action_update(request):
             if goal_id:
                 action.goal_id = int(goal_id)
 
+            now = datetime.now()
             if is_new:
-                action.created_date = datetime.now()
+                action.created_date = now
                 action.created_by = request.user
-                action.start_date = datetime.now() + timedelta(weeks=check_week)
+                action.start_date = now + timedelta(weeks=check_week)
             else:
-                action.start_date = action.start_date + timedelta(weeks=check_week)
+                this_week = dt.week_range(datetime.now().today(), 0)
+                week_offset = 0
+                if action.start_date > make_tz_aware(this_week[1]):
+                    week_offset = 1
+                action.start_date = action.start_date + timedelta(weeks=(check_week-week_offset))
 
             action.save()
 
