@@ -351,6 +351,24 @@ label.check{
     border-spacing: 0;
     border-collapse: collapse;
 }
+.checkbox{
+    width: 36px;
+}
+.action{
+    width: 180px;
+}
+.assigned_days{
+    width: 144px;
+}
+.time_needed{
+    width: 144px;
+}
+.due_date{
+    width: 144px;
+}
+.goal{
+    width: 180px;
+}
 
 .action_list tbody tr:nth-child(odd) {
     background-color: #edf5ff;
