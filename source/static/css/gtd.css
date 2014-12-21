@@ -186,7 +186,7 @@ div#content{
 /*goals basket*/
 p#goal_number{
     font-size: 14px;
-    color:rgba(0, 0, 0, 0.5) ;
+    color:rgba(0, 0, 0, 0.6) ;
     font-weight: 600;
 }
 
@@ -352,10 +352,11 @@ label.check{
     border-collapse: collapse;
     text-align: center;
     vertical-align: middle;
-    font-weight: 600;
+    color: rgba(0,0,0,0.6);
 }
 .action_list th, .action_list td{
     padding: 5px;
+    vertical-align: middle;
 }
 .checkbox{
     width: 36px;
