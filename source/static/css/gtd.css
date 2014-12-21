@@ -352,7 +352,9 @@ label.check{
     border-collapse: collapse;
     text-align: center;
 }
-
+th td{
+    height: 36px;
+}
 .checkbox{
     width: 36px;
 }
