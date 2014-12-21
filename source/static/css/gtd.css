@@ -352,8 +352,8 @@ label.check{
     border-collapse: collapse;
     text-align: center;
 }
-.action_list th td{
-    height: 36px;
+.action_list th, .action_list td{
+    padding: 5px;
 }
 .checkbox{
     width: 36px;
