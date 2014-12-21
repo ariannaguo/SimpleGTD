@@ -352,26 +352,26 @@ label.check{
     border-collapse: collapse;
     text-align: center;
 }
-th td{
+.action_list th td{
     height: 36px;
 }
 .checkbox{
     width: 36px;
 }
 .action{
-    width: 180px;
+    width: 221px;
 }
 .assigned_days{
-    width: 144px;
+    width: 195px;
 }
 .time_needed{
-    width: 144px;
+    width: 185px;
 }
 .due_date{
-    width: 144px;
+    width: 195px;
 }
 .goal{
-    width: 180px;
+    width: 221px;
 }
 
 .action_list tbody tr:nth-child(odd) {
