@@ -33,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="gtd.css" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="gtd.css" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/source/static/css/gtd.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5175" max-vertical-offset="6510">
-              <caret line="347" column="0" selection-start-line="347" selection-start-column="0" selection-end-line="347" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.24623115" vertical-offset="5182" max-vertical-offset="6525">
+              <caret line="352" column="22" selection-start-line="352" selection-start-column="22" selection-end-line="352" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -53,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="action_list.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="action_list.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/templates/simgtd/action_list.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.3767313" vertical-offset="4454" max-vertical-offset="8085">
-              <caret line="306" column="13" selection-start-line="306" selection-start-column="13" selection-end-line="306" selection-end-column="13" />
+            <state vertical-scroll-proportion="-18.791666" vertical-offset="5804" max-vertical-offset="8085">
+              <caret line="417" column="43" selection-start-line="417" selection-start-column="43" selection-end-line="417" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -702,18 +702,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/static/css/gtd.css">
+    <entry file="file://$PROJECT_DIR$/source/templates/simgtd/action_list.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5175" max-vertical-offset="6510">
-          <caret line="347" column="0" selection-start-line="347" selection-start-column="0" selection-end-line="347" selection-end-column="0" />
+        <state vertical-scroll-proportion="-18.791666" vertical-offset="5804" max-vertical-offset="8085">
+          <caret line="417" column="43" selection-start-line="417" selection-start-column="43" selection-end-line="417" selection-end-column="43" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/templates/simgtd/action_list.html">
+    <entry file="file://$PROJECT_DIR$/source/static/css/gtd.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3767313" vertical-offset="4454" max-vertical-offset="8085">
-          <caret line="306" column="13" selection-start-line="306" selection-start-column="13" selection-end-line="306" selection-end-column="13" />
+        <state vertical-scroll-proportion="0.24623115" vertical-offset="5182" max-vertical-offset="6525">
+          <caret line="352" column="22" selection-start-line="352" selection-start-column="22" selection-end-line="352" selection-end-column="22" />
           <folding />
         </state>
       </provider>

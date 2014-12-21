@@ -397,25 +397,25 @@
                 <table class="action_list">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>Action</th>
-                        <th>Days</th>
-                        <th>Time Needed</th>
-                        <th>Due Date</th>
-                        <th>Goal</th>
+                        <th class="checkbox"></th>
+                        <th class="action">Action</th>
+                        <th class="assigned_days">Days</th>
+                        <th class="time_needed">Time Needed</th>
+                        <th class="due_date">Due Date</th>
+                        <th class="goal">Goal</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for action in daily %}
                         <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
-                            <td><input type="checkbox" name="complete"></td>
-                            <td class="clickable">{{ action.subject }}</td>
-                            <td width="5%">{{ action.days }}</td>
-                            <td>
+                            <td class="checkbox"><input type="checkbox" name="complete"></td>
+                            <td class="clickable action">{{ action.subject }}</td>
+                            <td class="assigned_days" width="5%">{{ action.days }}</td>
+                            <td class="time_needed">
                                 {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
                             </td>
-                            <td>{{ action.due_date|date:"N j (D)" }}</td>
-                            <td>{% if action.goal %}{{ action.goal }}{% endif %}</td>
+                            <td class="due_date">{{ action.due_date|date:"N j (D)" }}</td>
+                            <td class="goal">{% if action.goal %}{{ action.goal }}{% endif %}</td>
                             <td width="5%">
                                 <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
                                     <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
