@@ -23,7 +23,7 @@ class GoalAdmin(admin.ModelAdmin):
 
 class ActionAdmin(admin.ModelAdmin):
 
-    list_display = ('subject', 'hours', 'minutes', 'created_date', 'due_date', 'status')
+    list_display = ('subject', 'hours', 'minutes', 'created_date', 'start_date', 'due_date', 'week_offset', 'status')
     list_filter = ('status', 'created_date', 'due_date')
     date_hierarchy = 'start_date'
     ordering = ('-start_date',)

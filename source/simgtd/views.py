@@ -179,9 +179,10 @@ def action_list(request):
             if a.start_date > this_week_start and match_day(a, next_week)]
     weekly.sort(key=lambda a: (a.status_id, a.days))
 
-    all_goals = user_goals(request).exclude(status_id=Constants.status_completed).order_by('-start_date')
+    all_goals = user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
     return render_to_response('simgtd/action_list.html',
-                              RequestContext(request, {"daily": daily, 'weekly': weekly, 'next_week': next,
+                              RequestContext(request, {"daily": daily, 'weekly': weekly,
+                                                       'next_week': next,
                                                        'goals': all_goals}))
 
 
