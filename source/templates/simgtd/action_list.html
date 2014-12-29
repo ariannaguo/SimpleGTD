@@ -9,6 +9,12 @@
     <script>
 
         var status_completed = "3";
+        var week_indicators = [0, 0, 1];
+
+        function getDay () {
+            var now = new Date();
+            return now.getDay() == 0 ? 7 : now.getDay();
+        }
 
         $(function () {
 
@@ -76,7 +82,9 @@
             var template = $("#action_template").html();
             Mustache.parse(template);
 
-            function updateAction() {
+            var action_lists = $(".action_list");
+
+            function update_action() {
                 var valid = true;
                 allFields.removeClass("ui-state-error");
                 valid = valid && checkLength(subject, "action", 1, 100);
@@ -90,59 +98,7 @@
                             data_save,
                             function(data) {
                                 if(data.result == 'OK') {
-
-                                    if (status_completed == data.action.status) {
-                                        data.action.done = "done";
-                                        data.action.checked = "checked";
-                                    }
-                                    if (!data.action.time) {
-                                        data.action.time = "NOT SET";
-                                    }
-
-                                    var new_row = Mustache.render(template, data);
-
-                                    var table = $(".action_list").eq(tabIndex());
-
-                                    function add_row (tbl) {
-                                        var days_index = 2;
-                                        var rows = tbl.find("tbody tr");
-                                        var new_status = data.action.status;
-                                        var new_days = data.action.days;
-                                        var new_index = -1;
-                                        console.log(rows.length);
-                                        for(var idx = 0; idx < rows.length; idx++) {
-                                            row = $(rows[idx]);
-                                            var sid = row.data("sid");
-                                            var days = row.find("td").eq(days_index).text();
-
-                                            if(new_status < sid
-                                               || (new_status == sid && new_days <= days)) {
-                                                new_index = idx;
-                                                break;
-                                            }
-                                        }
-
-                                        if (new_index < 0) {
-                                            tbl.find("tbody").append(new_row);
-                                        }
-                                        else {
-                                            var before = rows.eq(new_index);
-                                            before.before(new_row);
-                                        }
-                                    }
-
-                                    var aid = parseInt(action_id.val());
-                                    if(aid > 0) {
-                                        var r = table.find("tbody tr[data-id='" + aid + "']");
-
-                                        r.hide(500, function () {
-                                            r.remove();
-                                            add_row(table);
-                                        });
-                                    }
-                                    else{
-                                        add_row(table);
-                                    }
+                                    update_tables(data);
                                 }
                                 else {
                                     alert(data.message);
@@ -160,7 +116,7 @@
                 width: 'auto',
                 modal: true,
                 buttons: {
-                    "OK": updateAction,
+                    "OK": update_action,
                     Cancel: function () {
                         action_dialog.dialog("close");
                     }
@@ -173,7 +129,7 @@
 
             action_form = action_dialog.find("#action_form").on("submit", function (event) {
                 event.preventDefault();
-                updateAction();
+                update_action();
             });
 
             function open_action_dialog(aid, title) {
@@ -242,34 +198,99 @@
                 }, "json");
             }
 
-            $(".action_list").on("dblclick", "tr", function(event) {
+            action_lists.on("dblclick", "tr", function(event) {
                 edit_action($(this));
             });
 
-            $(".action_list").on("click", "tr .clickable", function(event) {
+            action_lists.on("click", "tr .clickable", function(event) {
                 edit_action($(this).parent());
             });
 
-            $(".action_list").on("click", "input[type='checkbox']", function() {
+            function update_tables(data) {
+                var action = data.action;
+                if (status_completed == action.status) {
+                    action.done = "done";
+                    action.checked = "checked";
+                }
+                if (!action.time) {
+                    action.time = "NOT SET";
+                }
+
+                var new_row = Mustache.render(template, data);
+
+                function add_row(tbl) {
+                    var days_index = 2;
+                    var rows = tbl.find("tbody tr");
+                    var new_status = data.action.status;
+                    var new_days = data.action.days;
+                    var new_index = -1;
+                    console.log(rows.length);
+                    for (var idx = 0; idx < rows.length; idx++) {
+                        row = $(rows[idx]);
+                        var sid = row.data("sid");
+                        var days = row.find("td").eq(days_index).text();
+
+                        if (new_status < sid
+                                || (new_status == sid && new_days <= days)) {
+                            new_index = idx;
+                            break;
+                        }
+                    }
+
+                    if (new_index < 0) {
+                        tbl.find("tbody").append(new_row);
+                    }
+                    else {
+                        var before = rows.eq(new_index);
+                        before.before(new_row);
+                    }
+                }
+
+                action_lists.each(function (idx) {
+                    if (action.week != week_indicators[idx]) {
+                        return;
+                    }
+
+                    if (idx == 0 && (action.days.indexOf(getDay()) < 0)) {
+                        return;
+                    }
+
+                    var table = $(this);
+                    var aid = parseInt(action_id.val());
+                    if (aid > 0) {
+                        var r = table.find("tbody tr[data-id='" + aid + "']");
+                        r.hide(500, function () {
+                            r.remove();
+                            add_row(table);
+                        });
+                    }
+                    else {
+                        add_row(table);
+                    }
+                });
+            }
+
+            action_lists.on("click", "input[type='checkbox']", function() {
                 var sid = 3;
                 if(!$(this).is(":checked")){
                     sid = 1;
                 }
                 var aid = $(this).closest("tr").data("id");
+                action_id.val(aid);
+
                 $.post('/action/status/' + aid,
                     { csrfmiddlewaretoken: "{{ csrf_token }}", sid: sid },
                     function(data) {
-                        if(data.result == 'OK') {
-                            location.reload();
-                        }
-                        else {
-                            alert(data.message);
-                        }
-                    }, "json"
-                );
+                        if(data.result == "OK") {
+                                update_tables(data);
+                            }
+                            else {
+                                alert(data.message);
+                            }
+                    }, "json");
             });
 
-            $(".action_list").tooltip({
+            action_lists.tooltip({
                 items: "img",
                 content: function () {
                     var elem = $(this);

@@ -350,7 +350,18 @@ def action_status(request, aid):
         action.status_id = sid
         action.save()
 
-        resp_data = {'aid': aid, 'result': 'OK'}
+        updated = {"id": action.id,
+                   "status": action.status_id,
+                   "subject": action.subject,
+                   "days": action.days,
+                   "time": action.time(),
+                   "due_date": action.due_date.strftime("%b. %d (%a)"),
+                   "week": action.week_offset,
+                   }
+        if action.goal:
+            updated["goal"] = action.goal.subject
+
+        resp_data = {"aid": action.id, "action": updated, 'result': 'OK', 'message': 'you got it!'}
     else:
         resp_data = {'aid': aid, 'result': 'ERROR'}
 
