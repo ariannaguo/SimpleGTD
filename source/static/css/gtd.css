@@ -169,7 +169,7 @@ a.menu{
 div#content{
     position: absolute;
     top: 50px;
-    right: 10px;
+    right: 30px;
     width: 80%;
     color: rgba(0,0,0,0.6);
     font-size: 12px;
@@ -347,6 +347,20 @@ label.check{
 }
 
 /* action list */
+button.add{
+    position: absolute;
+    top:0px;
+    right: 0px;
+    text-align: right;
+    display: block;
+    /*padding:5px 5px;*/
+    text-decoration: none;
+    color: white;
+    background-color: #68a4cc;
+    /*font-size: 16px;*/
+    font-weight: 600;
+
+}
 .action_list {
     border-spacing: 0;
     border-collapse: collapse;
