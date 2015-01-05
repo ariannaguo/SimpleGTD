@@ -177,7 +177,7 @@ def action_list(request):
 
     next = [a for a in actions_three_weeks
             if a.start_date > this_week_start and match_day(a, next_week)]
-    weekly.sort(key=lambda a: (a.status_id, a.days))
+    next.sort(key=lambda a: (a.status_id, a.days))
 
     all_goals = user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
     return render_to_response('simgtd/action_list.html',
@@ -260,8 +260,8 @@ def action_update(request):
                        "subject": action.subject,
                        "days": action.days,
                        "time": action.time(),
-                       "due_date": action.due_date.strftime("%b. %d (%a)"),
-                       "week": action.week_offset,
+                       "start_date": dt.to_standard_string(action.start_date),
+                       "due_date": action.due_date.strftime("%b. %d (%a)")
                        }
             if action.goal:
                 updated["goal"] = action.goal.subject
@@ -327,17 +327,6 @@ def add_action_comment(request, aid):
     return HttpResponseRedirect('/action/list/')
 
 
-# @login_required
-# def add_goal_comment(request, gid):
-#
-# comment = request.POST['comment']
-# if comment:
-# gc = GoalComment(comment=comment, goal_id=gid)
-#         gc.save()
-#
-#     return HttpResponseRedirect('/goal/list/')
-
-
 @login_required
 @require_http_methods(['POST'])
 def action_status(request, aid):
@@ -355,8 +344,8 @@ def action_status(request, aid):
                    "subject": action.subject,
                    "days": action.days,
                    "time": action.time(),
-                   "due_date": action.due_date.strftime("%b. %d (%a)"),
-                   "week": action.week_offset,
+                   "start_date": dt.to_standard_string(action.start_date),
+                   "due_date": action.due_date.strftime("%b %d (%a)")
                    }
         if action.goal:
             updated["goal"] = action.goal.subject

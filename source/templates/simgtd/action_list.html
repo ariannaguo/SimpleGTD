@@ -246,8 +246,19 @@
                     }
                 }
 
+                var week = 0;
+                if(action.start_date) {
+                    var start_date = new Date(action.start_date);
+                    var this_week = gtd.week_range(new Date());
+                    if(start_date > this_week.end){
+                        week = 1;
+                    }
+                }
+                console.log(week);
+
                 action_lists.each(function (idx) {
-                    if (action.week != week_indicators[idx]) {
+
+                    if (week != week_indicators[idx]) {
                         return;
                     }
 
@@ -320,7 +331,7 @@
 {% block content %}
 
     <script id="action_template" type="x-tmpl-mustache">
-    <tr data-id="[[ action.id ]]" class="[[ action.done ]]">
+    <tr data-id="[[ action.id ]]" data-sid="[[ action.status ]]" class="[[ action.done ]]">
         <td><input type="checkbox" name="complete" [[ action.checked ]]></td>
         <td class="clickable">[[ action.subject ]]</td>
         <td width="5%">[[ action.days ]]</td>
@@ -525,7 +536,7 @@
                     </thead>
                     <tbody>
                     {% for action in next_week %}
-                        <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}" class="{% if action.status_id == 3 %}done{% endif %}">
                             <td><input type="checkbox" name="complete"></td>
                             <td class="clickable">{{ action.subject }}</td>
                             <td width="5%">{{ action.days }}</td>

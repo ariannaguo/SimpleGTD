@@ -13,6 +13,10 @@ def to_datetime(dt):
     return datetime.combine(dt, datetime.min.time())
 
 
+def to_standard_string(dt):
+    return dt.strftime("%m/%d/%Y")
+
+
 def week_range_helper():
     ## use datetime
     today = datetime.today().date()
