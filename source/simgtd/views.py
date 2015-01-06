@@ -179,10 +179,20 @@ def action_list(request):
             if a.start_date > this_week_start and match_day(a, next_week)]
     next.sort(key=lambda a: (a.status_id, a.days))
 
+    # overdue actions
+    overdue_point = make_tz_aware(dt.week_range(today, -gtd_settings.overdue_weeks)[0])
+    overdue = user_actions(request).filter(start_date__gt=overdue_point,
+                                           start_date__lt=next_week_start,
+                                           due_date__lt=datetime.now())\
+        .exclude(status_id=Constants.status_completed)
+
     all_goals = user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
     return render_to_response('simgtd/action_list.html',
-                              RequestContext(request, {"daily": daily, 'weekly': weekly,
+                              RequestContext(request, {'daily': daily,
+                                                       'weekly': weekly,
                                                        'next_week': next,
+                                                       'overdue': len(overdue),
+                                                       'overdue_weeks': gtd_settings.overdue_weeks,
                                                        'goals': all_goals}))
 
 
@@ -355,3 +365,22 @@ def action_status(request, aid):
         resp_data = {'aid': aid, 'result': 'ERROR'}
 
     return HttpResponse(json.dumps(resp_data), content_type="application/json")
+
+
+@login_required
+def overdue(request):
+    overdue_actions = user_actions(request).filter(due_date__lt=datetime.now())\
+                                           .exclude(status_id=Constants.status_completed)
+
+    today = datetime.today()
+    overdue_point = make_tz_aware(dt.week_range(today, -gtd_settings.overdue_weeks)[0])
+    recent = [a for a in overdue_actions if a.due_date > overdue_point]
+    recent.sort(key=lambda a: a.due_date, reverse=True)
+
+    earlier = [a for a in overdue_actions if a.due_date <= overdue_point]
+    earlier.sort(key=lambda a: a.due_date, reverse=True)
+
+    return render_to_response('simgtd/action_overdue.html',
+                              RequestContext(request, {'recent': recent,
+                                                       'earlier': earlier,
+                                                       'total': len(overdue_actions)}))

@@ -136,7 +136,6 @@
                 action_dialog.dialog("open");
                 action_id.val(aid);
                 action_dialog.dialog("option", "title", title);
-                //action_dialog.dialog("option", "width", 500);
             }
 
             $("#create_action").button().on("click", function () {
@@ -424,7 +423,10 @@
     </div>
 
     <button id="create_action" class="button add">+ ADD ACTION</button>
-    <a id="overdue">You have 6 OVERDUE actions, check now!</a>
+    {% if overdue %}
+        <a id="overdue" href="{% url "overdue_actions" %}">You have {{ overdue }} OVERDUE action{{ overdue|pluralize }}
+            in last {{ overdue_weeks }} week{{ overdue_weeks|pluralize }}, check now!</a>
+    {% endif %}
 
     <div id="actions">
 

@@ -46,6 +46,7 @@ urlpatterns = patterns('',
     url(r'^action/(?P<aid>\d+)/comments/$', views.action_comments),
     url(r'^action/(?P<aid>\d+)/new_comment$', views.add_action_comment),
     url(r'^action/status/(?P<aid>\d+)', views.action_status),
+    url(r'^action/overdue/', views.overdue, name='overdue_actions'),
 
     url(r'^sms/', mobile_views.send_sms),
 
