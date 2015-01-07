@@ -27,7 +27,7 @@
 {% block content %}
 
     <div id="goals_basket">
-        <a href="/goal/add/" class="button add">+ ADD GOAL</a>
+        <button id="create_action" class="button add">+ ADD ACTION</button>
 
             {% if goals %}
                 <p id="goal_number">You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
