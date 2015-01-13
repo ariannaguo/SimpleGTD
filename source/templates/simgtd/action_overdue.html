@@ -22,6 +22,201 @@
                     $.cookie('overdue_tab', ui.newTab.index());
                 }
             });
+
+            // setup action dialog
+            var action_dialog, action_form,
+                    dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
+                    action_id = $("#action_id"),
+                    subject = $("#action"),
+                    hours = $("#hours"),
+                    minutes = $("#minutes"),
+                    due_date = $("#due_date"),
+                    tags = $("#tags"),
+                    allFields = $([]).add(subject).add(hours).add(minutes).add(due_date),
+                    tips = $(".validateTips");
+
+            function updateTips(t) {
+                tips.text(t)
+                        .addClass("ui-state-highlight");
+                setTimeout(function () {
+                    tips.removeClass("ui-state-highlight", 1500);
+                }, 500);
+            }
+
+            function checkLength(o, n, min, max) {
+                if (o.val().length > max || o.val().length < min) {
+                    o.addClass("ui-state-error");
+                    updateTips("Length of " + n + " must be between " +
+                            min + " and " + max + ".");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function checkRegexp(o, regexp, n) {
+                if (!( regexp.test(o.val()) )) {
+                    o.addClass("ui-state-error");
+                    updateTips(n);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            var action_lists = $(".action_list");
+
+            function update_action() {
+                var valid = true;
+                allFields.removeClass("ui-state-error");
+                valid = valid && checkLength(subject, "action", 1, 100);
+                valid = valid && (due_date.val().length == 0
+                                    || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
+                if (valid) {
+                    var data_save = action_form.serializeArray();
+                    data_save.push({ name: 'csrfmiddlewaretoken', value: '{{ csrf_token }}'});
+
+                    $.post('/action/update/',
+                            data_save,
+                            function(data) {
+                                if(data.result == 'OK') {
+                                    location.reload();
+                                }
+                                else {
+                                    alert(data.message);
+                                }
+                            }
+                    );
+                    action_dialog.dialog("close");
+                }
+                return valid;
+            }
+
+            action_dialog = $("#action_dialog").dialog({
+                autoOpen: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                buttons: {
+                    "OK": update_action,
+                    Cancel: function () {
+                        action_dialog.dialog("close");
+                    }
+                },
+                close: function () {
+                    action_form[0].reset();
+                    allFields.removeClass("ui-state-error");
+                }
+            });
+
+            action_form = action_dialog.find("#action_form").on("submit", function (event) {
+                event.preventDefault();
+                update_action();
+            });
+
+            function open_action_dialog(aid, title) {
+                action_dialog.dialog("open");
+                action_id.val(aid);
+                action_dialog.dialog("option", "title", title);
+            }
+
+            function edit_action (elem) {
+                var aid = elem.data("id");
+                if(!aid) { return; }
+
+                $.get('/action/' + aid, function(data) {
+                    if(data) {
+                        var action = data.action;
+                        subject.val(action.subject);
+                        hours.val(action.hours);
+                        minutes.val(action.minutes);
+
+                        due = new Date(Date.parse(action.due_date));
+                        due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
+
+                        tags.val(data.tags.join(", "));
+
+                        var week = 0;
+                        if(action.start_date) {
+                            var start_date = new Date(action.start_date.slice(0, -1));
+                            var this_week = gtd.week_range(new Date());
+                            if(start_date > this_week.end){
+                                week = 1;
+                            }
+                        }
+                        $("#week").find("[value=" + week + "]").prop("checked", true);
+
+                        var days = action.days;
+                        if(days !== null) {
+                            $(".check_day").each(function(index) {
+                                var box = $(this);
+                                if(days.indexOf(box.val()) >= 0) {
+                                    box.prop("checked", true);
+                                }
+                            });
+                        }
+
+                        var goal = action.goal;
+                        if(goal !== null) {
+                            $("#goal").val(goal);
+                        }
+
+                        open_action_dialog(aid, "Editing action - " + action.subject);
+                    }
+                }, "json");
+            }
+
+            action_lists.on("dblclick", "tr", function(event) {
+                edit_action($(this));
+            });
+
+            action_lists.on("click", "tr .clickable", function(event) {
+                edit_action($(this).parent());
+            });
+
+            action_lists.on("click", "input[type='checkbox']", function() {
+                var sid = 3;
+                if(!$(this).is(":checked")){
+                    sid = 1;
+                }
+                var aid = $(this).closest("tr").data("id");
+                action_id.val(aid);
+
+                $.post('/action/status/' + aid,
+                    { csrfmiddlewaretoken: "{{ csrf_token }}", sid: sid },
+                    function(data) {
+                        if(data.result == "OK") {
+                                location.reload();
+                            }
+                            else {
+                                alert(data.message);
+                            }
+                    }, "json");
+            });
+
+            action_lists.tooltip({
+                items: "img",
+                content: function () {
+                    var elem = $(this);
+                    if(elem.is("img")) {
+                        return elem.closest("tr").find(".notes").html();
+                    }
+                }
+            });
+
+            due_date.datepicker({
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true
+            });
+
+            $("tr[class='done'] input[type='checkbox']").each(function() {
+                var box = $(this);
+                box.prop("checked", true);
+                //box.prop("disabled", true);
+            });
         });
     </script>
 {%  endblock %}
@@ -29,6 +224,82 @@
 {% block content %}
 
     {% if total %}
+
+    <div id="action_dialog" title="Create new action">
+        <p class="validateTips"></p>
+        <form id="action_form">
+            <div id="add_action_setting">
+                <div class="field">
+                    <input type="hidden" id="action_id" name="action_id" class="field_label_input" value="-1">
+                </div>
+                <div class="field">
+                    <label class="field_label" for="action">Action <em class="required">*</em></label>
+                    <input type="text" id="action" name="action" class="field_label_input">
+                </div>
+                <div class="field">
+                    <label class="field_label">Time needed</label>
+                    <input type="number" id="hours" name="hours" class="field_label_input time_input">
+                    <label for="hours">h</label>
+
+                    <input type="number" id="minutes" name="minutes" class="field_label_input time_input">
+                    <label for="minutes">m</label>
+                </div>
+                <div class="field">
+                    <label class="field_label" for="due_date">Due Date</label>
+                    <input type="text" id="due_date" name="due_date" class="field_label_input">
+                </div>
+                <div class="field">
+                    <label class="field_label" for="tags">Tags</label>
+                    <input type="text" id="tags" name="tags" class="field_label_input">
+                </div>
+                <div>
+                    <div class="field check" id="week">
+                        <label for="check_week" class="check">
+                            <input type="radio" name="check_week" class="check_week" value="0" checked>This week
+                        </label>
+                        <label for="check_week" class="check">
+                            <input type="radio" name="check_week" class="check_week" value="1">Next week
+                        </label>
+                    </div>
+                    <div class="field" id="days">
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="1">Mon
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="2">Tue
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="3">Wed
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="4">Thu
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="5">Fri
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="6">Sat
+                        </label>
+                        <label for="check_day" class="check">
+                            <input type="checkbox" name="check_day" class="check_day" value="7">Sun
+                        </label>
+                    </div>
+
+                </div>
+
+                <div>
+                    <label for="goal"></label>
+                    <select id="goal" name="goal">
+                        <option value="" selected="selected">---select a goal---</option>
+                        {% for goal in goals %}
+                            <option value="{{ goal.id }}">{{ goal.subject }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <a id="overdue">
         <strong>Warning: </strong>You have {{ total }} OVERDUE action{{ total|pluralize }}, DO THEM QUICKLY!</a>
 

@@ -181,9 +181,10 @@ def action_list(request):
 
     # overdue actions
     overdue_point = make_tz_aware(dt.week_range(today, -gtd_settings.overdue_weeks)[0])
+    yesterday = datetime.today().date() - timedelta(seconds=1)
     overdue = user_actions(request).filter(start_date__gt=overdue_point,
                                            start_date__lt=next_week_start,
-                                           due_date__lt=datetime.now())\
+                                           due_date__lt=yesterday)\
         .exclude(status_id=Constants.status_completed)
 
     all_goals = user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
@@ -250,11 +251,7 @@ def action_update(request):
                 action.created_by = request.user
                 action.start_date = now + timedelta(weeks=check_week)
             else:
-                this_week = dt.week_range(datetime.now().today(), 0)
-                week_offset = 0
-                if action.start_date > make_tz_aware(this_week[1]):
-                    week_offset = 1
-                action.start_date = action.start_date + timedelta(weeks=(check_week-week_offset))
+                action.start_date = now + timedelta(weeks=check_week)
 
             action.save()
 
@@ -369,7 +366,8 @@ def action_status(request, aid):
 
 @login_required
 def overdue(request):
-    overdue_actions = user_actions(request).filter(due_date__lt=datetime.now())\
+    yesterday = datetime.today().date() - timedelta(seconds=1)
+    overdue_actions = user_actions(request).filter(due_date__lt=yesterday)\
                                            .exclude(status_id=Constants.status_completed)
 
     today = datetime.today()

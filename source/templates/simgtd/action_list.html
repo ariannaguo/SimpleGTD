@@ -138,7 +138,7 @@
                 action_dialog.dialog("option", "title", title);
             }
 
-            $("#create_action").button().on("click", function () {
+            function add_new_action() {
                 var due = new Date();
                 due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
 
@@ -149,6 +149,10 @@
                 $(".check_day[value=" + weekday + "]").prop("checked", true);
 
                 open_action_dialog(-1, "Adding a new action");
+            }
+
+            $("#create_action").button().on("click", function () {
+                add_new_action();
             });
 
             function edit_action (elem) {
@@ -323,6 +327,14 @@
                 box.prop("checked", true);
                 //box.prop("disabled", true);
             });
+
+{#            $(document).keypress(function(event) {#}
+{#                // if '+' is pressed#}
+{#                if (event.charCode == 43) {#}
+{#                    add_new_action();#}
+{#                    event.preventDefault();#}
+{#                }#}
+{#            });#}
         });
     </script>
 {% endblock %}
