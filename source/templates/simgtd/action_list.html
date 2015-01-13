@@ -159,7 +159,7 @@
                 var aid = elem.data("id");
                 if(!aid) { return; }
 
-                $.get('/action/' + aid, function(data) {
+                $.get('/action/' + aid + '/', function(data) {
                     if(data) {
                         var action = data.action;
                         subject.val(action.subject);

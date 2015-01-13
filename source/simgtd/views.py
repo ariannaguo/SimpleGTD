@@ -152,6 +152,10 @@ def user_goals(request):
     return Goal.objects.filter(created_by_id=user_id(request))
 
 
+def in_process_goals(request):
+    return user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
+
+
 @login_required
 def action_list(request):
     today = datetime.today()
@@ -187,7 +191,7 @@ def action_list(request):
                                            due_date__lt=yesterday)\
         .exclude(status_id=Constants.status_completed)
 
-    all_goals = user_goals(request).filter(status_id=Constants.status_in_process).order_by('subject')
+    all_goals = in_process_goals(request)
     return render_to_response('simgtd/action_list.html',
                               RequestContext(request, {'daily': daily,
                                                        'weekly': weekly,
@@ -378,7 +382,10 @@ def overdue(request):
     earlier = [a for a in overdue_actions if a.due_date <= overdue_point]
     earlier.sort(key=lambda a: a.due_date, reverse=True)
 
+    all_goals = in_process_goals(request)
+
     return render_to_response('simgtd/action_overdue.html',
                               RequestContext(request, {'recent': recent,
                                                        'earlier': earlier,
-                                                       'total': len(overdue_actions)}))
+                                                       'total': len(overdue_actions),
+                                                       'goals': all_goals}))
