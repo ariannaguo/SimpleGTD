@@ -18,7 +18,16 @@
 
 {% block content %}
 
+    {% if errors %}
+        <ul>
+            {% for e in errors %}
+                <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <form action="/goal/edit/{{ goal.id }}" method="post">
+
         {% csrf_token %}
         <div id="add_goal_setting">
             <textarea type="text" id="quickTitle" name="title"

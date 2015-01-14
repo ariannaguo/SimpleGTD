@@ -27,10 +27,10 @@
 {% block content %}
 
     <div id="goals_basket">
-        <a id="create_action" class="button add">+ ADD GOAL</a>
+        <a href="/goal/add/" class="button add">+ ADD GOAL</a>
 
             {% if goals %}
-                <p id="goal_number">You have {{ goals|length }} goal{{ goals|pluralize }}.</p>
+                <p id="goal_number">You have {{ in_progress|length }} goal{{ in_progress|pluralize }} in progress.</p>
 
                 <table class="goals_list_table">
                     <tbody>

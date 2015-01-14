@@ -61,9 +61,17 @@ def add_goal(request):
 
             return HttpResponseRedirect('/goal/list')
         else:
-            errors.append('incomplete data')
+            if not subject:
+                errors.append('Subject is required')
 
-    return render_to_response('simgtd/add_goal.html', RequestContext(request))
+            if not duration:
+                errors.append('Duration is required')
+
+            if not due_date:
+                errors.append('Due date is required')
+
+    return render_to_response('simgtd/add_goal.html',
+                              RequestContext(request, {'errors': errors}))
 
 
 @login_required
@@ -90,21 +98,32 @@ def edit_goal(request, gid):
 
             return HttpResponseRedirect('/goal/list')
         else:
-            errors.append('incomplete data')
+            if not subject:
+                errors.append('Subject is required')
+
+            if not duration:
+                errors.append('Duration is required')
+
+            if not due_date:
+                errors.append('Due date is required')
     else:
         goal = get_object_or_404(user_goals(request), id=gid)
 
     return render_to_response('simgtd/edit_goal.html',
-                              RequestContext(request, {'goal': goal}))
+                              RequestContext(request, {'goal': goal,
+                                                       'errors': errors}))
 
 
 @login_required
 def goals(request):
-    all_goals = user_goals(request).filter(created_by_id=user_id(request)) \
-        .order_by('status_id', '-start_date')
+    all_goals = user_goals(request).filter(created_by_id=user_id(request)).order_by('-due_date')
+    in_progress = [g for g in all_goals if g.status_id == Constants.status_in_process]
+    to_do = [g for g in all_goals if g.status_id == Constants.status_not_started]
+    completed = [g for g in all_goals if g.status_id == Constants.status_completed]
 
     return render_to_response('simgtd/goal_list.html',
-                              RequestContext(request, {'goals': all_goals}))
+                              RequestContext(request, {'in_progress': in_progress,
+                                                       'goals': in_progress + to_do + completed}))
 
 
 @login_required
