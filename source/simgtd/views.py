@@ -291,7 +291,9 @@ def action_update(request):
                        "days": action.days,
                        "time": action.time(),
                        "start_date": dt.to_standard_string(action.start_date),
-                       "due_date": action.due_date.strftime("%b. %d (%a)")
+                       "due_date_std": dt.to_standard_string(action.due_date),
+                       "due_date": action.due_date.strftime("%b. %d (%a)"),
+                       'week': check_week
                        }
             if action.goal:
                 updated["goal"] = action.goal.subject
@@ -375,7 +377,8 @@ def action_status(request, aid):
                    "days": action.days,
                    "time": action.time(),
                    "start_date": dt.to_standard_string(action.start_date),
-                   "due_date": action.due_date.strftime("%b %d (%a)")
+                   "due_date_std": dt.to_standard_string(action.due_date),
+                   "due_date": action.due_date.strftime("%b. %d (%a)"),
                    }
         if action.goal:
             updated["goal"] = action.goal.subject

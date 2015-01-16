@@ -19,8 +19,11 @@
         $(function () {
 
             // status
-            //var last_due_date = "";
-            //var last_days = "";
+            var session = {
+                editing: false,
+                last_action: null,
+                has_new: false
+            };
 
             // setup tabs
             function tabIndex () {
@@ -98,6 +101,11 @@
                             data_save,
                             function(data) {
                                 if(data.result == 'OK') {
+                                    if (parseInt(action_id.val()) < 0){
+                                        session.has_new = true;
+                                        session.last_action = data.action;
+                                    }
+
                                     update_tables(data);
                                 }
                                 else {
@@ -124,6 +132,8 @@
                 close: function () {
                     action_form[0].reset();
                     allFields.removeClass("ui-state-error");
+
+                    session.editing = false;
                 }
             });
 
@@ -136,17 +146,33 @@
                 action_dialog.dialog("open");
                 action_id.val(aid);
                 action_dialog.dialog("option", "title", title);
+
+                session.editing = true;
             }
 
             function add_new_action() {
-                var due = new Date();
-                due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
 
-                var weekday =due.getDay();
+                var now = new Date();
+                var due = gtd.toDateString(now);
+                if(session.has_new && session.last_action.due_date_std) {
+                    due = session.last_action.due_date_std;
+                }
+                due_date.val(due);
+
+                var weekday = now.getDay();
                 if(weekday == 0) {
                     weekday = 7;
                 }
-                $(".check_day[value=" + weekday + "]").prop("checked", true);
+                if (session.has_new && session.last_action.days) {
+                    weekday = session.last_action.days;
+                }
+                set_days(weekday);
+
+                var week = 0;
+                if (session.has_new && session.last_action.week) {
+                    week = session.last_action.week;
+                }
+                set_week(week);
 
                 open_action_dialog(-1, "Adding a new action");
             }
@@ -154,6 +180,24 @@
             $("#create_action").button().on("click", function () {
                 add_new_action();
             });
+
+            function set_week(week) {
+                if(week < 0 || week > 1) { return; }
+
+                $("#week").find("[value=" + week + "]").prop("checked", true);
+            }
+
+            function set_days(days) {
+                days = days.toString();
+                if (days) {
+                    $(".check_day").each(function (index) {
+                        var box = $(this);
+                        if (days.indexOf(box.val()) >= 0) {
+                            box.prop("checked", true);
+                        }
+                    });
+                }
+            }
 
             function edit_action (elem) {
                 var aid = elem.data("id");
@@ -167,7 +211,7 @@
                         minutes.val(action.minutes);
 
                         due = new Date(Date.parse(action.due_date));
-                        due_date.val((due.getMonth() + 1) + "/" + due.getDate() + "/" + due.getFullYear());
+                        due_date.val(gtd.toDateString(due));
 
                         tags.val(data.tags.join(", "));
 
@@ -179,17 +223,8 @@
                                 week = 1;
                             }
                         }
-                        $("#week").find("[value=" + week + "]").prop("checked", true);
-
-                        var days = action.days;
-                        if(days !== null) {
-                            $(".check_day").each(function(index) {
-                                var box = $(this);
-                                if(days.indexOf(box.val()) >= 0) {
-                                    box.prop("checked", true);
-                                }
-                            });
-                        }
+                        set_week(week);
+                        set_days(action.days);
 
                         var goal = action.goal;
                         if(goal !== null) {
@@ -328,13 +363,14 @@
                 //box.prop("disabled", true);
             });
 
-{#            $(document).keypress(function(event) {#}
-{#                // if '+' is pressed#}
-{#                if (event.charCode == 43) {#}
-{#                    add_new_action();#}
-{#                    event.preventDefault();#}
-{#                }#}
-{#            });#}
+            $(document).keypress(function(event) {
+                // if '+', '=', 'a', or 'A' is pressed
+                if (!session.editing
+                        && (event.charCode == 43 || event.charCode == 61 || event.charCode == 65 || event.charCode == 97)) {
+                    add_new_action();
+                    event.preventDefault();
+                }
+            });
         });
     </script>
 {% endblock %}
