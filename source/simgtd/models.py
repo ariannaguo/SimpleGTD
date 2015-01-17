@@ -11,6 +11,7 @@ class Constants(object):
     status_in_process = 2
     status_completed = 3
     status_suspended = 4
+    status_canceled = 5
 
     priority_low = 1
     priority_normal = 2

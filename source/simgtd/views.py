@@ -15,7 +15,7 @@ from django.views.decorators.http import require_http_methods
 from taggit.models import Tag
 
 from simgtd import settings, gtd_settings
-from simgtd.models import Goal, Action, Constants, ActionComment, GoalComment
+from simgtd.models import Goal, Action, Constants, ActionComment, GoalComment, Status
 from common import dt
 
 
@@ -111,6 +111,7 @@ def edit_goal(request, gid):
 
     return render_to_response('simgtd/edit_goal.html',
                               RequestContext(request, {'goal': goal,
+                                                       'status': Status.objects.all(),
                                                        'errors': errors}))
 
 
