@@ -75,7 +75,7 @@ class Action(models.Model):
 
     goal = models.ForeignKey(Goal, null=True, blank=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def tag_list(self):
         ts = []
