@@ -89,9 +89,9 @@ class Action(models.Model):
     def time(self):
         ts = ''
         if self.hours > 0:
-            ts = ts + str(self.hours) + ' hours'
+            ts = ts + str(self.hours) + 'h'
         if self.minutes > 0:
-            ts = ts + " " + str(self.minutes) + ' minutes'
+            ts = ts + " " + str(self.minutes) + 'm'
 
         return ts
 

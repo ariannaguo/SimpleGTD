@@ -472,8 +472,9 @@
 
     <button id="create_action" class="button add">+ ADD ACTION</button>
     {% if overdue %}
-        <a id="overdue" href="{% url "overdue_actions" %}">You have {{ overdue }} OVERDUE action{{ overdue|pluralize }}
-            in last {{ overdue_weeks }} week{{ overdue_weeks|pluralize }}, check now!</a>
+        <a id="overdue" href="{% url "overdue_actions" %}">Recent overdue goal{{ overdue|pluralize }}: {{ overdue }}</a>
+        <br />
+        <a id="overdue" href="{% url "overdue_actions" %}">Recent overdue action{{ overdue|pluralize }}: {{ overdue }}</a>
     {% endif %}
 
     <div id="actions">
