@@ -20,10 +20,14 @@ class GoalAdmin(admin.ModelAdmin):
             obj.completed_date = datetime.datetime.now()
         obj.save()
 
+    def queryset(self, request):
+        qs = super(GoalAdmin, self).queryset(request)
+        return qs.filter(created_by=request.user)
+
 
 class ActionAdmin(admin.ModelAdmin):
 
-    list_display = ('subject', 'hours', 'minutes', 'created_date', 'start_date', 'due_date', 'week_offset', 'status')
+    list_display = ('subject', 'hours', 'minutes', 'created_date', 'start_date', 'due_date', 'status')
     list_filter = ('status', 'created_date', 'due_date')
     date_hierarchy = 'start_date'
     ordering = ('-start_date',)
@@ -34,6 +38,10 @@ class ActionAdmin(admin.ModelAdmin):
         if obj.completed_date is None and obj.status.id == Constants.status_completed:
             obj.completed_date = datetime.datetime.now()
         obj.save()
+
+    def queryset(self, request):
+        qs = super(ActionAdmin, self).queryset(request)
+        return qs.filter(created_by=request.user)
 
 
 admin.site.register(Status)

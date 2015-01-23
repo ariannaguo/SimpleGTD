@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Edit Goal{% endblock %}
+{% block myScript %}
+    <script src="{{ STATIC_URL }}scripts/gtd.js"></script>
+{% endblock %}
 
 {% block loadScript %}
      <script>
@@ -12,6 +15,22 @@
 
             var status = {{ goal.status.id }};
             $("#status").val(status);
+
+            var gid = {{ goal.id }};
+            $("#delete").on('click', function() {
+                var sid = gtd.status.canceled.id;
+                if(gid && sid) {
+                    $.post( "/goal/status/" + gid,
+                        { csrfmiddlewaretoken: '{{ csrf_token }}', sid: sid },
+                        function(data) {
+                            if(data.result == 'OK'){
+                                window.location.replace('/goal/list/')
+                            } else {
+                                alert(data.message);
+                            }
+                    });
+                }
+            });
         });
     </script>
 {% endblock %}
@@ -56,6 +75,7 @@
             </div>
             <div class="field_button">
                 <input type="submit" class="save" value="Save">
+                <input type="button" id="delete" class="save" value="DELETE?">
                 <a href="/goal/list" class="cancel">Cancel</a>
             </div>
         </div>

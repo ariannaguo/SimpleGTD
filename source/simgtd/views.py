@@ -133,7 +133,7 @@ def goal_status(request, gid):
     gid = int(gid)
     sid = int(request.POST['sid'])
 
-    if sid in [1, 2, 3] and gid > 0:
+    if sid in Status.all() and gid > 0:
 
         goal = user_goals(request).get(id=gid)
 
@@ -165,11 +165,13 @@ def user_id(request):
 
 
 def user_actions(request):
-    return Action.objects.filter(created_by_id=user_id(request))
+    return Action.objects.filter(created_by_id=user_id(request))\
+        .exclude(status_id__in=Status.inactive_list())
 
 
 def user_goals(request):
-    return Goal.objects.filter(created_by_id=user_id(request))
+    return Goal.objects.filter(created_by_id=user_id(request))\
+        .exclude(status_id__in=Status.inactive_list())
 
 
 def in_process_goals(request):
@@ -206,18 +208,23 @@ def action_list(request):
     # overdue actions
     overdue_point = make_tz_aware(dt.week_range(today, -gtd_settings.overdue_weeks)[0])
     yesterday = datetime.today().date() - timedelta(seconds=1)
-    overdue = user_actions(request).filter(start_date__gt=overdue_point,
-                                           start_date__lt=next_week_start,
-                                           due_date__lt=yesterday)\
-        .exclude(status_id=Constants.status_completed)
+    overdue_actions = user_actions(request).filter(start_date__gt=overdue_point,
+                                                   start_date__lt=next_week_start,
+                                                   due_date__lt=yesterday) \
+        .exclude(status_id=Constants.status_completed).count()
+
+    overdue_goals = user_goals(request).filter(start_date__gt=overdue_point,
+                                               start_date__lt=next_week_start,
+                                               due_date__lt=yesterday) \
+        .exclude(status_id=Constants.status_completed).count()
 
     all_goals = in_process_goals(request)
     return render_to_response('simgtd/action_list.html',
                               RequestContext(request, {'daily': daily,
                                                        'weekly': weekly,
                                                        'next_week': next,
-                                                       'overdue': len(overdue),
-                                                       'overdue_weeks': gtd_settings.overdue_weeks,
+                                                       'overdue_actions': overdue_actions,
+                                                       'overdue_goals': overdue_goals,
                                                        'goals': all_goals}))
 
 
@@ -295,7 +302,7 @@ def action_update(request):
                        "due_date_std": dt.to_standard_string(action.due_date),
                        "due_date": action.due_date.strftime("%b. %d (%a)"),
                        'week': check_week
-                       }
+            }
             if action.goal:
                 updated["goal"] = action.goal.subject
 
@@ -365,7 +372,7 @@ def add_action_comment(request, aid):
 def action_status(request, aid):
     aid = int(aid)
     sid = int(request.POST['sid'])
-    if sid in [1, 2, 3] and aid > 0:
+    if sid in [1, 2, 3, 4, 5] and aid > 0:
         action = user_actions(request).get(id=aid)
         if action.status_id != Constants.status_completed and sid == Constants.status_completed:
             action.completed_date = datetime.now()
@@ -379,8 +386,9 @@ def action_status(request, aid):
                    "time": action.time(),
                    "start_date": dt.to_standard_string(action.start_date),
                    "due_date_std": dt.to_standard_string(action.due_date),
-                   "due_date": action.due_date.strftime("%b. %d (%a)"),
-                   }
+                   "due_date": action.due_date.strftime("%b. %d (%a)")
+        }
+
         if action.goal:
             updated["goal"] = action.goal.subject
 
@@ -394,8 +402,8 @@ def action_status(request, aid):
 @login_required
 def overdue(request):
     yesterday = datetime.today().date() - timedelta(seconds=1)
-    overdue_actions = user_actions(request).filter(due_date__lt=yesterday)\
-                                           .exclude(status_id=Constants.status_completed)
+    overdue_actions = user_actions(request).filter(due_date__lt=yesterday) \
+        .exclude(status_id=Constants.status_completed)
 
     today = datetime.today()
     overdue_point = make_tz_aware(dt.week_range(today, -gtd_settings.overdue_weeks)[0])

@@ -33,3 +33,24 @@ gtd.toWeekdayString = function (dt) {
     return (gtd.dateNames.shortMonthNames[dt.getMonth()]) + ". " + dt.getDate() + " (" +
             gtd.dateNames.shortDayNames[dt.getDay()] + ")";
 };
+
+gtd.status = {
+    not_started: { id: 1, show: true },
+    in_progress: { id: 2, show: true },
+    completed: { id: 3, show: true },
+    suspended: { id: 4, show: false },
+    canceled: { id: 5, show: false }
+};
+
+gtd.status.all = [gtd.status.not_started, gtd.status.in_progress, gtd.status.completed,
+                  gtd.status.suspended, gtd.status.canceled];
+
+gtd.status.find = function (id) {
+    for(var i = 0; i < this.all.length; i++){
+        if (this.all[i].id == id) {
+            return this.all[i];
+        }
+    }
+
+    return null;
+};

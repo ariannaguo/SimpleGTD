@@ -24,6 +24,21 @@ class Status(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
 
+    @classmethod
+    def active_list(cls):
+        return [Constants.status_not_started,
+                Constants.status_in_process,
+                Constants.status_completed]
+
+    @classmethod
+    def inactive_list(cls):
+        return [Constants.status_suspended,
+                Constants.status_canceled]
+
+    @classmethod
+    def all(cls):
+        return Status.active_list() + Status.inactive_list()
+
     def __unicode__(self):
         return self.name
 
