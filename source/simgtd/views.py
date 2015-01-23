@@ -233,6 +233,7 @@ def action_list(request):
 def action_update(request):
     aid = request.POST['action_id']
     subject = request.POST['action']
+    memo = request.POST['memo']
     hours = request.POST['hours']
     minutes = request.POST['minutes']
     due_date = request.POST['due_date']
@@ -250,6 +251,9 @@ def action_update(request):
                 action = user_actions(request).get(id=aid)
 
             action.subject = subject
+
+            if memo:
+                action.memo = memo
 
             if hours:
                 action.hours = int(hours)

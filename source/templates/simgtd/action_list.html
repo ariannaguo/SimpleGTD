@@ -45,6 +45,7 @@
                     dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
                     action_id = $("#action_id"),
                     subject = $("#action"),
+                    memo = $("#memo"),
                     hours = $("#hours"),
                     minutes = $("#minutes"),
                     due_date = $("#due_date"),
@@ -120,8 +121,8 @@
 
             action_dialog = $("#action_dialog").dialog({
                 autoOpen: false,
-                height: 'auto',
-                width: 'auto',
+                height: '550',
+                width: '390',
                 modal: true,
                 buttons: [
                     {
@@ -222,6 +223,7 @@
                     if(data) {
                         var action = data.action;
                         subject.val(action.subject);
+                        memo.val(action.memo);
                         hours.val(action.hours);
                         minutes.val(action.minutes);
 
@@ -487,6 +489,12 @@
                         {% endfor %}
                     </select>
                 </div>
+
+                <div class="field">
+                    <label class="field_label" for="memo">Memo</label>
+                    <textarea id="memo" name="memo" rows="8" cols="33"></textarea>
+                </div>
+
             </div>
         </form>
     </div>
