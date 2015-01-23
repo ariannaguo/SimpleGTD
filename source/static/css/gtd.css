@@ -209,7 +209,7 @@ a.add{
 }
 
 #goals_list_container{
-    position: absolute;
+    position: relative;
     display: block;
     top:60px;
     right: 30px;
@@ -221,6 +221,7 @@ a.add{
 table.goals_list_table{
     display: table;
     border: solid 2px #68a4cc;
+    border-collapse: separate;
     position: absolute;
     top:60px;
     right:2px;

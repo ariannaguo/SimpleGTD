@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Edit Goal{% endblock %}
+{% block myScript %}
+    <script src="{{ STATIC_URL }}scripts/gtd.js"></script>
+{% endblock %}
 
 {% block loadScript %}
      <script>
@@ -12,6 +15,22 @@
 
             var status = {{ goal.status.id }};
             $("#status").val(status);
+
+            var gid = {{ goal.id }};
+            $("#delete").on('click', function() {
+                var sid = gtd.status.canceled.id;
+                if(gid && sid) {
+                    $.post( "/goal/status/" + gid,
+                        { csrfmiddlewaretoken: '{{ csrf_token }}', sid: sid },
+                        function(data) {
+                            if(data.result == 'OK'){
+                                window.location.replace('/goal/list/')
+                            } else {
+                                alert(data.message);
+                            }
+                    });
+                }
+            });
         });
     </script>
 {% endblock %}
@@ -49,13 +68,14 @@
                 <label class="field_label" for="status">Status</label>
                 <select id="status" name="status">
                     <option value="" selected="selected">---select the status---</option>
-                    <option value="1">Not Started</option>
-                    <option value="2">In Progress</option>
-                    <option value="3">Completed</option>
+                    {% for s in status %}
+                        <option value="{{ s.id }}">{{ s.name }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="field_button">
                 <input type="submit" class="save" value="Save">
+                <input type="button" id="delete" class="save" value="DELETE?">
                 <a href="/goal/list" class="cancel">Cancel</a>
             </div>
         </div>

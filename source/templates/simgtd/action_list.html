@@ -45,6 +45,7 @@
                     dateRegex = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
                     action_id = $("#action_id"),
                     subject = $("#action"),
+                    memo = $("#memo"),
                     hours = $("#hours"),
                     minutes = $("#minutes"),
                     due_date = $("#due_date"),
@@ -120,15 +121,30 @@
 
             action_dialog = $("#action_dialog").dialog({
                 autoOpen: false,
-                height: 'auto',
-                width: 'auto',
+                height: '550',
+                width: '390',
                 modal: true,
-                buttons: {
-                    "OK": update_action,
-                    Cancel: function () {
-                        action_dialog.dialog("close");
+                buttons: [
+                    {
+                        text: "DELETE",
+                        icons: {
+                            primary: "ui-icon-trash"
+                        },
+                        click: function() {
+                            var sid = gtd.status.canceled.id;
+                            var aid = parseInt(action_id.val());
+                            update_status(aid, sid);
+                            action_dialog.dialog("close");
+                        }
+                    },
+                    {
+                        text: "OK",
+                        icons: {
+                            primary: "ui-icon-heart"
+                        },
+                        click: update_action
                     }
-                },
+                ],
                 close: function () {
                     action_form[0].reset();
                     allFields.removeClass("ui-state-error");
@@ -207,6 +223,7 @@
                     if(data) {
                         var action = data.action;
                         subject.val(action.subject);
+                        memo.val(action.memo);
                         hours.val(action.hours);
                         minutes.val(action.minutes);
 
@@ -310,7 +327,9 @@
                         var r = table.find("tbody tr[data-id='" + aid + "']");
                         r.hide(500, function () {
                             r.remove();
-                            add_row(table);
+                            if(gtd.status.find(action.status).show) {
+                                add_row(table);
+                            }
                         });
                     }
                     else {
@@ -320,13 +339,17 @@
             }
 
             action_lists.on("click", "input[type='checkbox']", function() {
-                var sid = 3;
+                var sid = gtd.status.completed.id;
                 if(!$(this).is(":checked")){
-                    sid = 1;
+                    sid = gtd.status.not_started.id;
                 }
                 var aid = $(this).closest("tr").data("id");
                 action_id.val(aid);
 
+                update_status(aid, sid);
+            });
+
+            function update_status (aid, sid) {
                 $.post('/action/status/' + aid,
                     { csrfmiddlewaretoken: "{{ csrf_token }}", sid: sid },
                     function(data) {
@@ -337,7 +360,7 @@
                                 alert(data.message);
                             }
                     }, "json");
-            });
+            }
 
             action_lists.tooltip({
                 items: "img",
@@ -466,15 +489,25 @@
                         {% endfor %}
                     </select>
                 </div>
+
+                <div class="field">
+                    <label class="field_label" for="memo">Memo</label>
+                    <textarea id="memo" name="memo" rows="8" cols="33"></textarea>
+                </div>
+
             </div>
         </form>
     </div>
 
     <button id="create_action" class="button add">+ ADD ACTION</button>
-    {% if overdue %}
-        <a id="overdue" href="{% url "overdue_actions" %}">You have {{ overdue }} OVERDUE action{{ overdue|pluralize }}
-            in last {{ overdue_weeks }} week{{ overdue_weeks|pluralize }}, check now!</a>
+    {% if overdue_actions %}
+        <a id="overdue" href="{% url "overdue_actions" %}">Recent overdue action{{ overdue_actions|pluralize }}: {{ overdue_actions }}</a>
     {% endif %}
+
+{#    {% if overdue_goals %}#}
+{#        <br />#}
+{#        <a id="overdue" href="{% url "overdue_goals" %}">Recent overdue goal{{ overdue_goals|pluralize }}: {{ overdue_goals }}</a>#}
+{#    {% endif %}#}
 
     <div id="actions">
 

@@ -11,6 +11,7 @@ class Constants(object):
     status_in_process = 2
     status_completed = 3
     status_suspended = 4
+    status_canceled = 5
 
     priority_low = 1
     priority_normal = 2
@@ -22,6 +23,21 @@ class Constants(object):
 class Status(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=500, blank=True)
+
+    @classmethod
+    def active_list(cls):
+        return [Constants.status_not_started,
+                Constants.status_in_process,
+                Constants.status_completed]
+
+    @classmethod
+    def inactive_list(cls):
+        return [Constants.status_suspended,
+                Constants.status_canceled]
+
+    @classmethod
+    def all(cls):
+        return Status.active_list() + Status.inactive_list()
 
     def __unicode__(self):
         return self.name
@@ -74,7 +90,7 @@ class Action(models.Model):
 
     goal = models.ForeignKey(Goal, null=True, blank=True)
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     def tag_list(self):
         ts = []
@@ -88,9 +104,9 @@ class Action(models.Model):
     def time(self):
         ts = ''
         if self.hours > 0:
-            ts = ts + str(self.hours) + ' hours'
+            ts = ts + str(self.hours) + 'h'
         if self.minutes > 0:
-            ts = ts + " " + str(self.minutes) + ' minutes'
+            ts = ts + " " + str(self.minutes) + 'm'
 
         return ts
 

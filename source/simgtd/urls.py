@@ -37,6 +37,7 @@ urlpatterns = patterns('',
     url(r'^goal/add/', views.add_goal),
     url(r'^goal/edit/(?P<gid>\d+)', views.edit_goal),
     url(r'^goal/status/(?P<gid>\d+)', views.goal_status),
+    url(r'^goal/overdue/', views.overdue, name='overdue_goals'),
 
     url(r'^action/list/', views.action_list),
     url(r'^action/update/', views.action_update),
