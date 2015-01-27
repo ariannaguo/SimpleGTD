@@ -87,6 +87,7 @@
             Mustache.parse(template);
 
             var action_lists = $(".action_list");
+            var stats = $(".stats");
 
             function update_action() {
                 var valid = true;
@@ -279,7 +280,6 @@
                     var new_status = data.action.status;
                     var new_days = data.action.days;
                     var new_index = -1;
-                    console.log(rows.length);
                     for (var idx = 0; idx < rows.length; idx++) {
                         row = $(rows[idx]);
                         var sid = row.data("sid");
@@ -309,7 +309,6 @@
                         week = 1;
                     }
                 }
-                console.log(week);
 
                 action_lists.each(function (idx) {
 
@@ -330,10 +329,12 @@
                             if(gtd.status.find(action.status).show) {
                                 add_row(table);
                             }
+                            setTimeStats(table);
                         });
                     }
                     else {
                         add_row(table);
+                        setTimeStats(table);
                     }
                 });
             }
@@ -394,6 +395,55 @@
                     event.preventDefault();
                 }
             });
+
+            function setTimeStats(tbl) {
+
+                var sta = tbl.parent().find(".stats");
+
+                var hours = 0;
+                var minutes = 0;
+
+                var done_hours = 0;
+                var done_minutes = 0;
+                var p = new RegExp("(\\d+h)?\\s*(\\d+m)?");
+
+                tbl.find('tbody tr .time_needed').each(function (idx) {
+
+                    var cell = $(this);
+                    var done = cell.closest("tr").hasClass("done");
+
+                    var time = cell.text().trim();
+                    var ms = p.exec(time);
+                    //console.log(ms);
+                    if(ms[1]) {
+                        hours += parseInt(ms[1]);
+                        if(done) {
+                            done_hours += parseInt(ms[1]);
+                        }
+                    }
+                    if(ms[2]) {
+                        minutes += parseInt(ms[2]);
+                        if(done) {
+                            done_minutes += parseInt(ms[2]);
+                        }
+                    }
+                });
+
+                hours += Math.floor(minutes / 60);
+                minutes = minutes % 60;
+                //console.log(hours + ' ' + minutes);
+
+                done_hours += Math.floor(done_minutes / 60);
+                done_minutes = done_minutes % 60;
+                //console.log(done_hours + ' ' + done_minutes);
+
+                var stats_info = "Total Time: " + hours + ":" + minutes + ", Done: " + done_hours + ":" + done_minutes;
+                sta.text(stats_info);
+            }
+
+            action_lists.each(function () {
+                setTimeStats($(this));
+            });
         });
     </script>
 {% endblock %}
@@ -405,7 +455,7 @@
         <td><input type="checkbox" name="complete" [[ action.checked ]]></td>
         <td class="clickable">[[ action.subject ]]</td>
         <td width="5%">[[ action.days ]]</td>
-        <td>
+        <td class="time_needed">
             [[ action.time ]]
         </td>
         <td>[[ action.due_date ]]</td>
@@ -518,6 +568,9 @@
                 <li><a href="#next_week">Next week</a></li>
             </ul>
             <div id="daily">
+
+                <div class="stats"></div>
+
                 <table class="action_list">
                     <thead>
                     <tr>
@@ -561,6 +614,9 @@
                 </table>
             </div>
             <div id="weekly">
+
+                <div class="stats"></div>
+
                 <table class="action_list">
                     <thead>
                     <tr data-id="{{ action.id }}">
@@ -578,7 +634,7 @@
                             <td class="checkbox"><input type="checkbox" name="complete"></td>
                             <td class="clickable action">{{ action.subject }}</td>
                             <td class="assigned_days" width="5%">{{ action.days }}</td>
-                            <td class="time_neede">
+                            <td class="time_needed">
                                 {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
                             </td>
                             <td class="due_date">{{ action.due_date|date:"N j (D)" }}</td>
@@ -606,6 +662,9 @@
                 </table>
             </div>
             <div id="next_week">
+
+                <div class="stats"></div>
+
                 <table class="action_list">
                     <thead>
                     <tr>
@@ -623,7 +682,7 @@
                             <td><input type="checkbox" name="complete"></td>
                             <td class="clickable">{{ action.subject }}</td>
                             <td width="5%">{{ action.days }}</td>
-                            <td>
+                            <td class="time_needed">
                                 {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
                             </td>
                             <td>{{ action.due_date|date:"N j (D)" }}</td>
