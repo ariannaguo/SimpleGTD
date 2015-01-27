@@ -463,3 +463,14 @@ input[type="text"]:focus, textarea:focus {
     font-size: 1em;
     color: magenta;
 }
+
+/* tooltips */
+/*.tooltip{*/
+    /*margin:8px;*/
+    /*padding:8px;*/
+    /*border:1px solid blue;*/
+    /*background-color:yellow;*/
+    /*position: absolute;*/
+    /*z-index: 2;*/
+/*}*/
+
