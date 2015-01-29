@@ -50,7 +50,8 @@
                     minutes = $("#minutes"),
                     due_date = $("#due_date"),
                     tags = $("#tags"),
-                    allFields = $([]).add(subject).add(hours).add(minutes).add(due_date),
+                    btn_delete = $("#")
+                    allFields = $([]).add(subject).add(memo).add(hours).add(minutes).add(due_date),
                     tips = $(".validateTips");
 
             function updateTips(t) {
@@ -94,7 +95,8 @@
                 allFields.removeClass("ui-state-error");
                 valid = valid && checkLength(subject, "action", 1, 100);
                 valid = valid && (due_date.val().length == 0
-                                    || checkRegexp(due_date, dateRegex, "Due date field only allow a mm/dd/yyyy format"));
+                                    || checkRegexp(due_date, dateRegex, "Due date field only allows a mm/dd/yyyy format"));
+
                 if (valid) {
                     var data_save = action_form.serializeArray();
                     data_save.push({ name: 'csrfmiddlewaretoken', value: '{{ csrf_token }}'});
@@ -163,6 +165,44 @@
                 action_dialog.dialog("open");
                 action_id.val(aid);
                 action_dialog.dialog("option", "title", title);
+
+                var buttons;
+                if (aid > 0) {
+                    buttons = [
+                        {
+                            text: "DELETE",
+                            icons: {
+                                primary: "ui-icon-trash"
+                            },
+                            click: function () {
+                                var sid = gtd.status.canceled.id;
+                                var aid = parseInt(action_id.val());
+                                update_status(aid, sid);
+                                action_dialog.dialog("close");
+                            }
+                        },
+                        {
+                            text: "OK",
+                            icons: {
+                                primary: "ui-icon-heart"
+                            },
+                            click: update_action
+                        }
+                    ];
+                }
+                else {
+                    buttons = [
+                        {
+                            text: "OK",
+                            icons: {
+                                primary: "ui-icon-heart"
+                            },
+                            click: update_action
+                        }
+                    ];
+                }
+
+                action_dialog.dialog("option", "buttons", buttons);
 
                 session.editing = true;
             }
@@ -363,21 +403,6 @@
                     }, "json");
             }
 
-            action_lists.tooltip({
-                items: ".tooltip",
-                position: {
-                    my: "center bottom",
-                    at: "center top-10",
-                    collision: "none"
-                },
-                content: function () {
-                    var elem = $(this);
-                    if(elem.is(".tooltip")) {
-                        return elem.find("div").eq(0).text();
-                    }
-                }
-            });
-
             due_date.datepicker({
                 showOtherMonths: true,
                 selectOtherMonths: true,
@@ -449,6 +474,11 @@
             action_lists.each(function () {
                 setTimeStats($(this));
             });
+
+{#            var replaceWith = $('<input name="temp" type="text" />'),#}
+{#            connectWith = $('input[name="hiddenField"]');#}
+{##}
+{#            $('p').inlineEdit(replaceWith, connectWith);#}
         });
     </script>
 {% endblock %}
@@ -465,7 +495,7 @@
         </td>
         <td>[[ action.due_date ]]</td>
         <td>[[ action.goal ]]</td>
-        <td width="5%">
+        <td width="5%" class="tooltip">
             <a href="{% url "site_root" %}action/[[ action.id ]]/comments/">
                 <img src="{{ STATIC_URL }}images/notes.png" title="Add a note" />
             </a>
@@ -553,6 +583,11 @@
             </div>
         </form>
     </div>
+
+{#    <form>#}
+{#        <input type="hidden" name="hiddenField" />#}
+{#    </form>#}
+{#    <p>Please edit me...</p>#}
 
     <button id="create_action" class="button add">+ ADD ACTION</button>
     {% if overdue_actions %}

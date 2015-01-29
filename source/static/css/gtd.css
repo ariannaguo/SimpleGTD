@@ -465,12 +465,23 @@ input[type="text"]:focus, textarea:focus {
 }
 
 /* tooltips */
-/*.tooltip{*/
-    /*margin:8px;*/
-    /*padding:8px;*/
-    /*border:1px solid blue;*/
-    /*background-color:yellow;*/
-    /*position: absolute;*/
-    /*z-index: 2;*/
-/*}*/
+.tooltip:hover .notes {
+    display: block;
+}
 
+.notes {
+    display: none;
+    background: #a6a59c;
+    margin-left: 5px;
+    padding: 10px;
+    position: absolute;
+    right: 50px;
+    top: 50px;
+    z-index: 1000;
+    width:200px;
+    height:100px;
+}
+
+.tooltip {
+    margin:100px;
+}
