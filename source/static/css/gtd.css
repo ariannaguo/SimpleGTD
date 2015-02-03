@@ -243,6 +243,10 @@ table.goals_list_table{
     padding: 5px;
 }
 
+.goals_list_table tbody tr.overdue {
+    color: red;
+}
+
 /*th.goals, td.goals {*/
     /*text-align: left;*/
 /*}*/
@@ -422,6 +426,10 @@ a#overdue{
 
 .action_list .notes {
     display: none;
+}
+
+.action_list tbody tr.overdue {
+    color: red;
 }
 
 /* links */

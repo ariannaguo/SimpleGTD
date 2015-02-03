@@ -45,7 +45,8 @@
                            <th>Actions</th>
                         </tr>
                         {% for goal in goals %}
-                        <tr data-id="{{ goal.id }}">
+                        <tr data-id="{{ goal.id }}"
+                            class="{% if goal.overdue %}overdue{% endif %}">
                             <td class="goals" width="50%"><a href="/goal/edit/{{ goal.id }}">{{ goal.subject }}</a></td>
                             <td class="duration">{{ goal.duration }} days</td>
                             <td class="progress">{{ goal.progress }}</td>

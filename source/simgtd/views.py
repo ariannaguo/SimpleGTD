@@ -108,9 +108,11 @@ def edit_goal(request, gid):
                 errors.append('Due date is required')
     else:
         goal = get_object_or_404(user_goals(request), id=gid)
+        actions = user_actions(request).filter(goal_id=gid).order_by('due_date')
 
     return render_to_response('simgtd/edit_goal.html',
                               RequestContext(request, {'goal': goal,
+                                                       'actions': actions,
                                                        'status': Status.objects.all(),
                                                        'errors': errors}))
 

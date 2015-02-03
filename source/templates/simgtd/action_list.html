@@ -467,7 +467,9 @@
                 done_minutes = done_minutes % 60;
                 //console.log(done_hours + ' ' + done_minutes);
 
-                var stats_info = "Total Time: " + hours + ":" + minutes + ", Done: " + done_hours + ":" + done_minutes;
+                var stats_info = "Total Time: " + hours + ":" + minutes
+                                 + ", Done: " + done_hours + ":" + done_minutes
+                                 + " (" + Math.round(((done_hours * 60 + done_minutes) / (hours * 60 + minutes)) * 100) + "%)";
                 sta.text(stats_info);
             }
 
@@ -624,7 +626,8 @@
                     </thead>
                     <tbody>
                     {% for action in daily %}
-                        <tr data-id="{{ action.id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}"
+                            class="{% if action.status_id == 3 %}done{% endif %} {% if action.overdue %}overdue{% endif %}">
                             <td class="checkbox"><input type="checkbox" name="complete"></td>
                             <td class="clickable action">{{ action.subject }}</td>
                             <td class="assigned_days" width="5%">{{ action.days }}</td>
@@ -659,7 +662,7 @@
 
                 <table class="action_list">
                     <thead>
-                    <tr data-id="{{ action.id }}">
+                    <tr>
                         <th class="checkbox"></th>
                         <th class="action">Action</th>
                         <th class="assigned_days">Days</th>
@@ -670,7 +673,8 @@
                     </thead>
                     <tbody>
                     {% for action in weekly %}
-                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}"
+                            class="{% if action.status_id == 3 %}done{% endif %} {% if action.overdue %}overdue{% endif %}">
                             <td class="checkbox"><input type="checkbox" name="complete"></td>
                             <td class="clickable action">{{ action.subject }}</td>
                             <td class="assigned_days" width="5%">{{ action.days }}</td>
@@ -705,11 +709,13 @@
                         <th class="time_needed">Time Needed</th>
                         <th class="due_date">Due Date</th>
                         <th class="goal">Goal</th>
+                        <th class="notes">Goal</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for action in next_week %}
-                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}" class="{% if action.status_id == 3 %}done{% endif %}">
+                        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}"
+                            class="{% if action.status_id == 3 %}done{% endif %} {% if action.overdue %}overdue{% endif %}">
                             <td><input type="checkbox" name="complete"></td>
                             <td class="clickable">{{ action.subject }}</td>
                             <td width="5%">{{ action.days }}</td>

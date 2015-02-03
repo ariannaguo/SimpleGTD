@@ -2,7 +2,9 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import User, Group
+from django.utils import timezone
 from taggit.managers import TaggableManager
+from common import dt
 
 
 class Constants(object):
@@ -70,6 +72,10 @@ class Goal(models.Model):
     def __unicode__(self):
         return self.subject
 
+    def overdue(self):
+        now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+        return (self.status_id != Constants.status_completed) and (self.due_date < now)
+
 
 class Action(models.Model):
     subject = models.CharField(max_length=200)
@@ -115,6 +121,10 @@ class Action(models.Model):
             return 'done'
         else:
             return 'in progress'
+
+    def overdue(self):
+        now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+        return (self.status_id != Constants.status_completed) and (self.due_date < now)
 
 
 class ActionComment(models.Model):
