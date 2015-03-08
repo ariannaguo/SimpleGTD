@@ -30,6 +30,7 @@ urlpatterns = patterns('',
 
     # for simple gtd
     url(r'^about/', views.about),
+    url(r'^try/', views.djtry),
     url(r'^email/', views.email),
     url(r'^temp/', internal_views.use_template),
 

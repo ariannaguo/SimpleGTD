@@ -37,6 +37,11 @@ def about(request):
 
 
 @login_required
+def djtry(request):
+    return render_to_response('simgtd/try.html', RequestContext(request, {'time': datetime.now()}))
+
+
+@login_required
 def home(request):
     return render_to_response('simgtd/home.html', RequestContext(request))
 
@@ -167,12 +172,12 @@ def user_id(request):
 
 
 def user_actions(request):
-    return Action.objects.filter(created_by_id=user_id(request))\
+    return Action.objects.filter(created_by_id=user_id(request)) \
         .exclude(status_id__in=Status.inactive_list())
 
 
 def user_goals(request):
-    return Goal.objects.filter(created_by_id=user_id(request))\
+    return Goal.objects.filter(created_by_id=user_id(request)) \
         .exclude(status_id__in=Status.inactive_list())
 
 

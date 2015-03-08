@@ -1,0 +1,47 @@
+<div id="{{ list_id }}">
+
+    <div class="stats"></div>
+
+    <table class="action_list">
+        <thead>
+        <tr>
+            <th class="checkbox"></th>
+            <th class="action">Action</th>
+            <th class="assigned_days">Days</th>
+            <th class="time_needed">Time Needed</th>
+            <th class="due_date">Due Date</th>
+            <th class="goal">Goal</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for action in actions %}
+        <tr data-id="{{ action.id }}" data-sid="{{ action.status_id }}"
+            class="{% if action.status_id == 3 %}done{% endif %} {% if action.overdue %}overdue{% endif %}">
+            <td class="checkbox"><input type="checkbox" name="complete"></td>
+            <td class="clickable action">{{ action.subject }}</td>
+            <td class="assigned_days" width="5%">{{ action.days }}</td>
+            <td class="time_needed">
+                {% if action.time %}{{ action.time }}{% else %}NOT SET{% endif %}
+            </td>
+            <td class="due_date">{{ action.due_date|date:"N j (D)" }}</td>
+            <td class="goal">{% if action.goal %}{{ action.goal }}{% endif %}</td>
+            <td width="5%">
+                <a href="{% url "site_root" %}action/{{ action.id }}/comments/">
+                <img src="{{ STATIC_URL }}images/notes.png" title="Add a note"/>
+                </a>
+
+                {% if action.comments.all %}
+                <div class="notes">
+                    <ul>
+                        {% for c in action.comments.all %}
+                        <li>{{ c.comment }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
