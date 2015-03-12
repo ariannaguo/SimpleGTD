@@ -18,4 +18,9 @@ def action_overdue(context, actions, list_id):
             'STATIC_URL': context['STATIC_URL']}
 
 
+@register.inclusion_tag('simgtd/tags/action_dialog.html', takes_context=True)
+def action_dialog(context, goals):
+    return {'goals': goals}
+
+
 # register.inclusion_tag('simgtd/tags/action_list.html')(action_list)

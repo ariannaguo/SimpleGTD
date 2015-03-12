@@ -3,7 +3,6 @@ import json
 import logging
 
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from django.core.mail import send_mail
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms import model_to_dict
@@ -273,7 +272,7 @@ def action_update(request):
                 action.minutes = 0
 
             if due_date:
-                action.due_date = datetime.strptime(due_date, '%m/%d/%Y')
+                action.due_date = dt.to_end_of_date(datetime.strptime(due_date, '%m/%d/%Y'))
 
             check_week = int(request.POST['check_week'])
             action.week_offset = check_week

@@ -7,7 +7,18 @@ from django.utils import timezone
 from common import dt
 from common.leancloud import send_due_notification, send_due_notification2
 from simgtd import settings, gtd_settings
-from simgtd.models import Goal, Constants
+from simgtd.models import Goal, Constants, Action
+from simgtd.views import overdue
+
+
+class UserActions():
+
+    overdue = None
+    today = None
+
+    def __init__(self):
+        self.overdue = []
+        self.today = []
 
 
 class Command(BaseCommand):
@@ -16,31 +27,29 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('max', nargs='?', type=int)
 
-    def notify_email(self, user, goals):
+    def notify_email(self, user, actions):
 
-        now = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
-        overdue = [g for g in goals if g.due_date < now]
-        will_be_due = [g for g in goals if g.due_date >= now]
+        actions_overdue = actions.overdue
+        actions_today = actions.today
 
-        self.stdout.write(str(len(goals)))
-        self.stdout.write(str(len(overdue)))
-        self.stdout.write(str(len(will_be_due)))
+        self.stdout.write(str(len(actions_overdue)))
+        self.stdout.write(str(len(actions_today)))
 
         mail = render_to_string('simgtd/email/duedate.html',
                                 {'name': user.first_name,
                                  'root': settings.SITE_ROOT,
-                                 'goal_overdue': overdue,
-                                 'goal_will_be_due': will_be_due})
+                                 'actions_overdue': actions_overdue,
+                                 'actions_today': actions_today})
 
         self.stdout.write(user.first_name)
         self.stdout.write(mail)
-        send_mail('Overdue Goals', '',
+        send_mail('Overdue Actions', '',
                   'SimpleGTD <' + settings.EMAIL_ADMIN + '>',
                   [user.email],
                   html_message=mail,
                   fail_silently=False)
 
-    def notify_sms(self, user, goals):
+    def notify_sms(user, goals):
         # TODO: send sms to user
         sms = ''
 
@@ -48,29 +57,32 @@ class Command(BaseCommand):
         # translation.activate('zh-cn')
 
         now = datetime.now()
-        due = now + timedelta(days=gtd_settings.notify_before_days)
-        self.stdout.write(str(due))
+        due = now
+        self.stdout.write("due date time: " + str(due))
         two_months_ago = dt.week_range(now, -8)
-        due_goals = Goal.objects.filter(created_date__gt=two_months_ago[0],
-                                        due_date__lt=due)\
-                                .exclude(status_id=Constants.status_completed)
+        due_actions = Action.objects.filter(start_date__gt=two_months_ago[0],
+                                            due_date__lt=due) \
+            .exclude(status_id=Constants.status_completed)
 
-        user_goals = {}
-        for g in due_goals:
-            if g.created_by not in user_goals.keys():
-                user_goals[g.created_by] = []
-            user_goals[g.created_by].append(g)
+        user_actions = {}
+        for action in due_actions:
+            if action.created_by not in user_actions.keys():
+                user_actions[action.created_by] = UserActions()
+            user_actions[action.created_by].overdue.append(action)
 
-        # for g in due_goals:
-        # self.stdout.write('sending sms')
-        #     #self.stdout.write(now.strftime("%B %d, %Y"))
-        #     #send_due_notification(anders, 'duedate', 'goal', g.subject, now.strftime("%b %d"), 'http://simplegtd.me/')
-        #     #send_due_notification2(anders, 'duedate', 'goal', g.subject,
-        #     #                       g.due_date.strftime("%b %d, %A"), 'http://simplegtd.me/goal/list')
-        #     self.stdout.write('sms sent')
-        #
-        #     self.stdout.write('Goal "%s"' % g.subject)
-        #     # translation.deactivate()
+        this_week = dt.week_range(now, 0)
+        actions_this_week = Action.objects.filter(start_date__gt=this_week[0], start_date__lt=this_week[1])
+        today_weekday = str(now.weekday() + 1)
+        today = [a for a in actions_this_week if today_weekday in a.days]
 
-        for user in user_goals.keys():
-            self.notify_email(user, user_goals[user])
+        for action in today:
+            if action.created_by not in user_actions.keys():
+                user_actions[action.created_by] = UserActions()
+            user_actions[action.created_by].today.append(action)
+
+        self.stdout.write(str(len(user_actions.keys())))
+
+        for u in user_actions.keys():
+            self.notify_email(u, user_actions[u])
+
+
