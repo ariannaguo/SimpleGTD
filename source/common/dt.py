@@ -21,6 +21,21 @@ def to_standard_string(dt):
     return dt.strftime("%m/%d/%Y")
 
 
+def normalize(hours, minutes):
+    h = hours + minutes / 60
+    m = minutes % 60
+    return h, m
+
+
+def normalize_many(times):
+    hours, minutes = 0, 0
+    for hp, mp in times:
+        hours += hp
+        minutes += mp
+
+    return normalize(hours, minutes)
+
+
 def week_range_helper():
     ## use datetime
     today = datetime.today().date()
@@ -46,9 +61,21 @@ def week_range_helper():
     print(last_sunday)
 
 
-if __name__ == '__main__':
-    week_range_helper()
+def test_normalize():
+    h, m = normalize(1, 90)
+    print(h, m)
+    assert h == 2
+    assert m == 30
 
-    print(week_range(datetime.now(), -1))
-    print(week_range(datetime.now(), -2))
-    print(week_range(datetime.now(), 2))
+    h, m = normalize_many([(1, 30), (2, 50), (3, 70)])
+    print(h, m)
+
+
+if __name__ == '__main__':
+    # week_range_helper()
+
+    # print(week_range(datetime.now(), -1))
+    # print(week_range(datetime.now(), -2))
+    # print(week_range(datetime.now(), 2))
+
+    test_normalize()

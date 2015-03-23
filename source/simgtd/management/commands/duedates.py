@@ -8,7 +8,6 @@ from common import dt
 from common.leancloud import send_due_notification, send_due_notification2
 from simgtd import settings, gtd_settings
 from simgtd.models import Goal, Constants, Action
-from simgtd.views import overdue
 
 
 class UserActions():
@@ -32,6 +31,9 @@ class Command(BaseCommand):
         actions_overdue = actions.overdue
         actions_today = actions.today
 
+        today_times = [(a.hours, a.minutes) for a in actions_today]
+        today_hours, today_minutes = dt.normalize_many(today_times)
+
         self.stdout.write(str(len(actions_overdue)))
         self.stdout.write(str(len(actions_today)))
 
@@ -39,12 +41,14 @@ class Command(BaseCommand):
                                 {'name': user.first_name,
                                  'root': settings.SITE_ROOT,
                                  'actions_overdue': actions_overdue,
-                                 'actions_today': actions_today})
+                                 'actions_today': actions_today,
+                                 'today_hours': today_hours,
+                                 'today_minutes': today_minutes})
 
         self.stdout.write(user.first_name)
         self.stdout.write(mail)
         send_mail('Overdue Actions', '',
-                  'SimpleGTD <' + settings.EMAIL_ADMIN + '>',
+                  'SimpleGTD Daily Reminder <' + settings.EMAIL_ADMIN + '>',
                   [user.email],
                   html_message=mail,
                   fail_silently=False)

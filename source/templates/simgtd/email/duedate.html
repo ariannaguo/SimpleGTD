@@ -3,15 +3,25 @@
 {% block title %}Email Notification{% endblock %}
 
 {% block content %}
+
+    <img src="{{ root }}/static/images/logo.png" />
+
     <p><strong>Hi {{ name }},</strong></p>
 
     {% if actions_today %}
-        <p>今天还有这些事情要做，努力哈：</p>
+        <p>今天你有{{ actions_today|length }}件事情要做，大概需要{{ today_hours }}小时，努力哈：</p>
         <ul>
             {% for action in actions_today %}
                 <li><a href="{{ root }}/action/list">{{ action.subject }}</a></li>
             {% endfor %}
         </ul>
+
+        <a href="{{ root }}/action/list">到SimGTD看看去</a>
+
+    {% elif actions_overdue %}
+        <p>太棒了，今天可以轻松一下，但前面有些事情没有做完，
+            <a href="{{ root }}/action/overdue">到SimGTD看看去</a>
+        </p>
     {% else %}
         <p>太棒了，今天可以轻松一下了 :-)</p>
     {% endif %}
@@ -19,12 +29,15 @@
     <hr />
 
     {% if actions_overdue %}
-        <p>这些事情已经过期了，还不赶紧滚去做！？</p>
+        <p>过去的两个月里，你有{{ actions_overdue|length }}件事情已经过期了，尽快做起来吧！</p>
         <ul>
             {% for action in actions_overdue %}
                 <li><a href="{{ root }}/action/overdue">{{ action.subject }}</a></li>
             {% endfor %}
         </ul>
+
+        <a href="{{ root }}/action/overdue">到SimGTD看看去</a>
+
         <hr />
     {% endif %}
 
